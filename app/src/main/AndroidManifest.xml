@@ -139,12 +139,6 @@
             android:theme="@style/AppTheme.Search" />
 
 
-        <!-- 全区热门视频界面 -->
-        <activity
-            android:name=".module.home.discover.AllHotVideoActivity"
-            android:screenOrientation="portrait" />
-
-
         <!-- 原创排行榜界面 -->
         <activity
             android:name=".module.home.discover.OriginalRankActivity"
@@ -178,6 +172,11 @@
         <!-- 活动中心界面 -->
         <activity
             android:name=".module.home.discover.ActivityCenterActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- 大会员界面 -->
+        <activity
+            android:name=".module.entry.VipActivity"
             android:screenOrientation="portrait" />
 
 

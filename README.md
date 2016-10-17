@@ -64,6 +64,14 @@
 >由于每个版本更新的东西较多，所以从现在开始每个版本都会贴上更新日志.
 
 
+### V2.2.3
+
+  * 1.添加大会员相关内容界面以及周边商城。
+  * 2.优化了一些界面展示细节。
+  * 3.部分代码，布局优化。
+  * 4.修复番剧，视频详情界面的RecyclerView切换Fragment时自动滑动问题。
+
+
 ### V2.2.2
 
   * 1.添加全新的用户详情界面，跟官方保持一致。
@@ -132,6 +140,8 @@
 <a href="art/04.png"><img src="art/04.png" width="40%"/></a> <a href="art/05.png"><img src="art/05.png" width="40%"/></a>
 
 <a href="art/06.png"><img src="art/06.png" width="40%"/></a> <a href="art/07.png"><img src="art/07.png" width="40%"/></a>
+
+<a href="art/003.png"><img src="art/003.png" width="40%"/></a> <a href="art/004.png"><img src="art/004.png" width="40%"/></a>
 
 <a href="art/08.png"><img src="art/08.png" width="40%"/></a> <a href="art/09.png"><img src="art/09.png" width="40%"/></a>
 

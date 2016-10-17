@@ -21,6 +21,7 @@
     <dimen name="default_general_margin">10dp</dimen>
     <dimen name="default_grow_margin">20dp</dimen>
     <dimen name="default_long_margin">30dp</dimen>
+    <dimen name="head_image_bg_height">128dp</dimen>
 
     <!--weekday bangumi layout size-->
     <dimen name="weekday_bangumi_card_height">170dp</dimen>
@@ -265,6 +266,10 @@
     <dimen name="chase_bangumi_card_height">150dp</dimen>
     <dimen name="chase_bangumi_image_width">100dp</dimen>
     <dimen name="chase_bangumi_image_height">130dp</dimen>
+    <dimen name="vip_head_layout_height">330dp</dimen>
+    <dimen name="vip_head_image_margin_top">50dp</dimen>
+    <dimen name="vip_toolbar_title_margin_start">30dp</dimen>
+    <dimen name="home_topic_head_layout_height">40dp</dimen>
 
 
 </resources>

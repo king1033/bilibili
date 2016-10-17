@@ -5,7 +5,7 @@
 
     <solid android:color="@color/nav_head_round_background" />
 
-    <corners android:radius="@dimen/default_general_margin" />
+    <corners android:radius="2dp" />
 
 
 </shape>

@@ -1,5 +1,6 @@
 package com.hotbitmapgg.ohmybilibili.module.video;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -33,6 +34,8 @@ import com.hotbitmapgg.ohmybilibili.entity.video.VideoDetails;
 import com.hotbitmapgg.ohmybilibili.event.AppBarStateChangeEvent;
 import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
 import com.hotbitmapgg.ohmybilibili.network.auxiliary.UrlHelper;
+import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
+import com.hotbitmapgg.ohmybilibili.utils.DisplayUtil;
 import com.hotbitmapgg.ohmybilibili.utils.SystemBarHelper;
 
 import java.util.ArrayList;
@@ -75,13 +78,12 @@ public class VideoDetailsActivity extends RxAppCompatBaseActivity
     @Bind(R.id.tv_player)
     TextView mTvPlayer;
 
+    @Bind(R.id.tv_av)
+    TextView mAvText;
+
     private List<Fragment> fragments = new ArrayList<>();
 
     private List<String> titles = new ArrayList<>();
-
-    private static String EXTRA_AV = "extra_av";
-
-    private static String EXTRA_IMG_URL = "extra_img_url";
 
     private int av;
 
@@ -104,8 +106,8 @@ public class VideoDetailsActivity extends RxAppCompatBaseActivity
         Intent intent = getIntent();
         if (intent != null)
         {
-            av = intent.getIntExtra(EXTRA_AV, -1);
-            imgUrl = intent.getStringExtra(EXTRA_IMG_URL);
+            av = intent.getIntExtra(ConstantUtils.EXTRA_AV, -1);
+            imgUrl = intent.getStringExtra(ConstantUtils.EXTRA_IMG_URL);
         }
 
         Glide.with(VideoDetailsActivity.this)
@@ -137,18 +139,25 @@ public class VideoDetailsActivity extends RxAppCompatBaseActivity
                 {
                     //展开状态
                     mTvPlayer.setVisibility(View.GONE);
+                    mAvText.setVisibility(View.VISIBLE);
+                    mToolbar.setContentInsetsRelative(DisplayUtil.dp2px(VideoDetailsActivity.this, 15), 0);
                 } else if (state == State.COLLAPSED)
                 {
                     //折叠状态
                     mTvPlayer.setVisibility(View.VISIBLE);
+                    mAvText.setVisibility(View.GONE);
+                    mToolbar.setContentInsetsRelative(DisplayUtil.dp2px(VideoDetailsActivity.this, 150), 0);
                 } else
                 {
                     mTvPlayer.setVisibility(View.GONE);
+                    mAvText.setVisibility(View.VISIBLE);
+                    mToolbar.setContentInsetsRelative(DisplayUtil.dp2px(VideoDetailsActivity.this, 15), 0);
                 }
             }
         });
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void initToolBar()
     {
@@ -167,6 +176,8 @@ public class VideoDetailsActivity extends RxAppCompatBaseActivity
         //设置StatusBar透明
         SystemBarHelper.immersiveStatusBar(this);
         SystemBarHelper.setHeightAndPadding(this, mToolbar);
+
+        mAvText.setText("av" + av);
     }
 
 
@@ -208,8 +219,8 @@ public class VideoDetailsActivity extends RxAppCompatBaseActivity
 
         Intent intent = new Intent(activity, VideoDetailsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(EXTRA_AV, aid);
-        intent.putExtra(EXTRA_IMG_URL, imgUrl);
+        intent.putExtra(ConstantUtils.EXTRA_AV, aid);
+        intent.putExtra(ConstantUtils.EXTRA_IMG_URL, imgUrl);
         activity.startActivity(intent);
     }
 
