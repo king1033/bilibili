@@ -14,6 +14,7 @@ import com.hotbitmapgg.ohmybilibili.adapter.section.HomeBangumiRecommendSection;
 import com.hotbitmapgg.ohmybilibili.adapter.section.HomeBangumiSeasonNewSection;
 import com.hotbitmapgg.ohmybilibili.base.RxLazyFragment;
 import com.hotbitmapgg.ohmybilibili.entity.bangumi.BangumiRecommend;
+import com.hotbitmapgg.ohmybilibili.entity.bangumi.HomeBangumiRecommend;
 import com.hotbitmapgg.ohmybilibili.entity.bangumi.NewBangumiSerial;
 import com.hotbitmapgg.ohmybilibili.entity.bangumi.SeasonNewBangumi;
 import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
@@ -26,7 +27,7 @@ import com.hotbitmapgg.ohmybilibili.widget.sectioned.SectionedRecyclerViewAdapte
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -41,22 +42,22 @@ import rx.schedulers.Schedulers;
 public class HomeBangumiFragment extends RxLazyFragment
 {
 
-    @Bind(R.id.swipe_refresh_layout)
+    @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
-    @Bind(R.id.recycle)
+    @BindView(R.id.recycle)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.empty_layout)
+    @BindView(R.id.empty_layout)
     CustomEmptyView mCustomEmptyView;
 
     private boolean mIsRefreshing = false;
 
     private List<BannerEntity> bannerList = new ArrayList<>();
 
-    private List<BangumiRecommend.RecommendsBean> recommends = new ArrayList<>();
+    private List<BangumiRecommend.ResultBean> bangumiRecommends = new ArrayList<>();
 
-    private List<BangumiRecommend.BannersBean> banners = new ArrayList<>();
+    private List<HomeBangumiRecommend.ResultBean.BannersBean> banners = new ArrayList<>();
 
     private List<NewBangumiSerial.ListBean> newBangumiSerials = new ArrayList<>();
 
@@ -92,12 +93,13 @@ public class HomeBangumiFragment extends RxLazyFragment
         if (!isPrepared || !isVisible)
 
             return;
-        showProgressBar();
+        initRefreshLayout();
         initRecyclerView();
         isPrepared = false;
     }
 
-    private void initRecyclerView()
+    @Override
+    protected void initRecyclerView()
     {
 
         mSectionedRecyclerViewAdapter = new SectionedRecyclerViewAdapter();
@@ -127,7 +129,8 @@ public class HomeBangumiFragment extends RxLazyFragment
         setRecycleNoScroll();
     }
 
-    private void showProgressBar()
+    @Override
+    protected void initRefreshLayout()
     {
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -135,49 +138,44 @@ public class HomeBangumiFragment extends RxLazyFragment
 
             mSwipeRefreshLayout.setRefreshing(true);
             mIsRefreshing = true;
-            getBangumiRecommends();
+            loadData();
         });
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             clearData();
-            getBangumiRecommends();
+            loadData();
         });
     }
+
 
     private void clearData()
     {
 
         mIsRefreshing = true;
         banners.clear();
-        recommends.clear();
+        bangumiRecommends.clear();
         newBangumiSerials.clear();
         seasonNewBangumis.clear();
         mSectionedRecyclerViewAdapter.removeAllSections();
     }
 
 
-    /**
-     * 获取番剧推荐数据
-     * 包含Banner和番剧推荐内容
-     * 获取二次元新番
-     */
-    private void getBangumiRecommends()
+    @Override
+    protected void loadData()
     {
 
-
-        RetrofitHelper.getBnagumiRecommendApi()
-                .getBangumiRecommended()
+        RetrofitHelper.getHomeBnagumiRecommendApi()
+                .getHomeBangumiRecommended()
                 .compose(this.bindToLifecycle())
-                .flatMap(new Func1<BangumiRecommend,Observable<SeasonNewBangumi>>()
+                .flatMap(new Func1<HomeBangumiRecommend,Observable<SeasonNewBangumi>>()
                 {
 
                     @Override
-                    public Observable<SeasonNewBangumi> call(BangumiRecommend bangumiRecommend)
+                    public Observable<SeasonNewBangumi> call(HomeBangumiRecommend homeBangumiRecommend)
                     {
 
-                        banners.addAll(bangumiRecommend.getBanners());
-                        recommends.addAll(bangumiRecommend.getRecommends());
+                        banners.addAll(homeBangumiRecommend.getResult().getBanners());
                         return RetrofitHelper.getSeasonNewBangumiApi()
                                 .getSeasonNewBangumiList();
                     }
@@ -195,12 +193,24 @@ public class HomeBangumiFragment extends RxLazyFragment
                                 .getNewBangumiSerialList();
                     }
                 })
-                .compose(this.bindToLifecycle())
+                .flatMap(new Func1<NewBangumiSerial,Observable<BangumiRecommend>>()
+                {
+
+                    @Override
+                    public Observable<BangumiRecommend> call(NewBangumiSerial newBangumiSerial)
+                    {
+
+                        newBangumiSerials.addAll(newBangumiSerial.getList());
+                        return RetrofitHelper.getBangumiRecommendedApi()
+                                .getBangumiRecommended();
+                    }
+                })
+                .compose(bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(newBangumiSerial -> {
+                .subscribe(bangumiDetailsRecommend -> {
 
-                    newBangumiSerials.addAll(newBangumiSerial.getList());
+                    bangumiRecommends.addAll(bangumiDetailsRecommend.getResult());
                     finishTask();
                 }, throwable -> {
 
@@ -209,7 +219,8 @@ public class HomeBangumiFragment extends RxLazyFragment
                 });
     }
 
-    private void finishTask()
+    @Override
+    protected void finishTask()
     {
 
         mSwipeRefreshLayout.setRefreshing(false);
@@ -220,7 +231,7 @@ public class HomeBangumiFragment extends RxLazyFragment
         for (int i = 0, size = banners.size(); i < size; i++)
         {
             banner = new BannerEntity();
-            BangumiRecommend.BannersBean bannersBean = banners.get(i);
+            HomeBangumiRecommend.ResultBean.BannersBean bannersBean = banners.get(i);
             banner.img = bannersBean.getImg();
             banner.link = bannersBean.getLink();
             bannerList.add(banner);
@@ -229,10 +240,9 @@ public class HomeBangumiFragment extends RxLazyFragment
         mSectionedRecyclerViewAdapter.addSection(new HomeBangumiItemSection(getActivity()));
         mSectionedRecyclerViewAdapter.addSection(new HomeBangumiNewSerialSection(getActivity(), newBangumiSerials));
         mSectionedRecyclerViewAdapter.addSection(new HomeBangumiSeasonNewSection(getActivity(), seasonNewBangumis));
-        mSectionedRecyclerViewAdapter.addSection(new HomeBangumiRecommendSection(getActivity(), recommends));
+        mSectionedRecyclerViewAdapter.addSection(new HomeBangumiRecommendSection(getActivity(), bangumiRecommends));
         mSectionedRecyclerViewAdapter.notifyDataSetChanged();
     }
-
 
     public void initEmptyView()
     {
@@ -243,7 +253,7 @@ public class HomeBangumiFragment extends RxLazyFragment
         mCustomEmptyView.setEmptyImage(R.drawable.img_tips_error_load_error);
         mCustomEmptyView.setEmptyText("加载失败~(≧▽≦)~啦啦啦.");
         SnackbarUtil.showMessage(mRecyclerView, "数据加载失败,请重新加载或者检查网络是否链接");
-        mCustomEmptyView.reload(this::showProgressBar);
+        mCustomEmptyView.reload(this::initRefreshLayout);
     }
 
     public void hideEmptyView()

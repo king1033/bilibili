@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 import com.hotbitmapgg.ohmybilibili.module.entry.AttentionPeopleFragment;
 import com.hotbitmapgg.ohmybilibili.module.entry.ConsumeHistoryFragment;
 import com.hotbitmapgg.ohmybilibili.module.entry.HistoryFragment;
@@ -30,7 +30,7 @@ import com.hotbitmapgg.ohmybilibili.utils.PreferenceUtils;
 import com.hotbitmapgg.ohmybilibili.utils.ToastUtil;
 import com.hotbitmapgg.ohmybilibili.widget.CircleImageView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 /**
  * Created by hcc on 16/8/7 14:12
@@ -38,14 +38,14 @@ import butterknife.Bind;
  * <p/>
  * MainActivity
  */
-public class MainActivity extends RxAppCompatBaseActivity implements
+public class MainActivity extends RxBaseActivity implements
         NavigationView.OnNavigationItemSelectedListener
 {
 
-    @Bind(R.id.drawer_layout)
+    @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
-    @Bind(R.id.navigation_view)
+    @BindView(R.id.navigation_view)
     NavigationView mNavigationView;
 
     private Fragment[] fragments;
@@ -339,8 +339,5 @@ public class MainActivity extends RxAppCompatBaseActivity implements
     }
 
     @Override
-    public void initToolBar()
-    {
-
-    }
+    public void initToolBar() {}
 }

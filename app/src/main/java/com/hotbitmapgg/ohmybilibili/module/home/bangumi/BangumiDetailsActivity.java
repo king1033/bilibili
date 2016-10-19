@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -23,11 +22,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.adapter.BangumiDetailsRecommendAdapter;
 import com.hotbitmapgg.ohmybilibili.adapter.BangumiDetailsSelectionAdapter;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
-import com.hotbitmapgg.ohmybilibili.entity.bangumi.BangumiDetailsRecommend;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
+import com.hotbitmapgg.ohmybilibili.entity.bangumi.HomeBangumiRecommend;
 import com.hotbitmapgg.ohmybilibili.entity.bangumi.MiddlewareBangumi;
 import com.hotbitmapgg.ohmybilibili.entity.bangumi.SpecialTopic;
-import com.hotbitmapgg.ohmybilibili.module.common.BrowserActivity;
 import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
 import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
 import com.hotbitmapgg.ohmybilibili.utils.NumberUtil;
@@ -43,14 +41,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-
-import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.EXTRA_BANGUMI_KEY;
 
 /**
  * Created by hcc on 16/8/14 17:51
@@ -58,58 +54,49 @@ import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.EXTRA_BANGUMI_KEY
  * <p/>
  * 番剧详情界面
  */
-public class BangumiDetailsActivity extends RxAppCompatBaseActivity
+public class BangumiDetailsActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.nested_scroll_view)
+    @BindView(R.id.nested_scroll_view)
     NestedScrollView mNestedScrollView;
 
-    @Bind(R.id.bangumi_bg)
+    @BindView(R.id.bangumi_bg)
     ImageView mBangumiBackgroundImage;
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.bangumi_pic)
+    @BindView(R.id.bangumi_pic)
     ImageView mBangumiPic;
 
-    @Bind(R.id.bangumi_details_layout)
+    @BindView(R.id.bangumi_details_layout)
     LinearLayout mDetailsLayout;
 
-    @Bind(R.id.circle_progress)
+    @BindView(R.id.circle_progress)
     CircleProgressView mCircleProgressView;
 
-    @Bind(R.id.bangumi_title)
+    @BindView(R.id.bangumi_title)
     TextView mBangumiTitle;
 
-    @Bind(R.id.bangumi_update)
+    @BindView(R.id.bangumi_update)
     TextView mBangumiUpdate;
 
-    @Bind(R.id.bangumi_play)
+    @BindView(R.id.bangumi_play)
     TextView mBangumiPlay;
 
-//    @Bind(R.id.btn_share)
-//    LinearLayout btnShare;
-//
-//    @Bind(R.id.btn_follow)
-//    LinearLayout btnFollow;
-//
-//    @Bind(R.id.btn_download)
-//    LinearLayout btnDownload;
-
-    @Bind(R.id.bangumi_selection_recycler)
+    @BindView(R.id.bangumi_selection_recycler)
     RecyclerView mBangumiSelectionRecycler;
 
-    @Bind(R.id.tags_layout)
+    @BindView(R.id.tags_layout)
     TagFlowLayout mTagsLayout;
 
-    @Bind(R.id.bangumi_details_introduction)
+    @BindView(R.id.bangumi_details_introduction)
     TextView mBangumiIntroduction;
 
 //    @Bind(R.id.bangumi_comment_recycler)
 //    RecyclerView mBangumiCommentRecycler;
 
-    @Bind(R.id.bangumi_recommend_recycler)
+    @BindView(R.id.bangumi_recommend_recycler)
     RecyclerView mBangumiRecommendRecycler;
 
     private SpecialTopic mSpecialTopic;
@@ -118,7 +105,7 @@ public class BangumiDetailsActivity extends RxAppCompatBaseActivity
 
     private Random random = new Random();
 
-    private List<BangumiDetailsRecommend.ResultBean> mBangumiDetailsRecommends = new ArrayList<>();
+    private List<HomeBangumiRecommend.ResultBean.EndsBean> recommends = new ArrayList<>();
 
     private List<String> tags = Arrays.asList(
             "轻改", "萌系", "搞笑", "催泪", "热血",
@@ -152,33 +139,33 @@ public class BangumiDetailsActivity extends RxAppCompatBaseActivity
                 .getSpInfo(mBangumiInfo.getSpid(), mBangumiInfo.getTitle())
                 .compose(bindToLifecycle())
                 .doOnSubscribe(this::showProgressBar)
-                .flatMap(new Func1<SpecialTopic,Observable<BangumiDetailsRecommend>>()
+                .flatMap(new Func1<SpecialTopic,Observable<HomeBangumiRecommend>>()
                 {
 
                     @Override
-                    public Observable<BangumiDetailsRecommend> call(SpecialTopic specialTopic)
+                    public Observable<HomeBangumiRecommend> call(SpecialTopic specialTopic)
                     {
 
                         mSpecialTopic = specialTopic;
-                        return RetrofitHelper.getBangumiDetailsRecommendedApi()
-                                .getBangumiDetailsRecommended();
+                        return RetrofitHelper.getHomeBnagumiRecommendApi()
+                                .getHomeBangumiRecommended();
                     }
                 })
                 .compose(bindToLifecycle())
-                .map(BangumiDetailsRecommend::getResult)
+                .map(homeBangumiRecommend -> homeBangumiRecommend.getResult().getEnds())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(resultBeanList -> {
+                .subscribe(endsBeans -> {
 
-                    mBangumiDetailsRecommends.addAll(resultBeanList);
+                    recommends.addAll(endsBeans);
                     finishTask();
                 }, throwable -> {
-
                     hideProgressBar();
                 });
     }
 
-    private void finishTask()
+    @Override
+    public void finishTask()
     {
 
         //设置番剧封面
@@ -265,13 +252,10 @@ public class BangumiDetailsActivity extends RxAppCompatBaseActivity
 
         mBangumiRecommendRecycler.setHasFixedSize(false);
         mBangumiRecommendRecycler.setNestedScrollingEnabled(false);
-        mBangumiRecommendRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mBangumiRecommendRecycler.setLayoutManager(new GridLayoutManager(BangumiDetailsActivity.this, 3));
         BangumiDetailsRecommendAdapter mBangumiDetailsRecommendAdapter = new BangumiDetailsRecommendAdapter(
-                mBangumiRecommendRecycler, mBangumiDetailsRecommends);
+                mBangumiRecommendRecycler, recommends);
         mBangumiRecommendRecycler.setAdapter(mBangumiDetailsRecommendAdapter);
-        mBangumiDetailsRecommendAdapter.setOnItemClickListener((position, holder) -> BrowserActivity.launch(
-                BangumiDetailsActivity.this, mBangumiDetailsRecommends.get(position).getLink(),
-                mBangumiDetailsRecommends.get(position).getTitle()));
     }
 
     @Override
@@ -335,6 +319,7 @@ public class BangumiDetailsActivity extends RxAppCompatBaseActivity
         return true;
     }
 
+    @Override
     public void showProgressBar()
     {
 
@@ -343,7 +328,8 @@ public class BangumiDetailsActivity extends RxAppCompatBaseActivity
         mDetailsLayout.setVisibility(View.GONE);
     }
 
-    private void hideProgressBar()
+    @Override
+    public void hideProgressBar()
     {
 
         mCircleProgressView.setVisibility(View.GONE);

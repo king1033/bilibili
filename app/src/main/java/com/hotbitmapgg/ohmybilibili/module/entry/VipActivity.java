@@ -8,11 +8,11 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
 import com.hotbitmapgg.ohmybilibili.utils.SystemBarHelper;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 /**
  * Created by hcc on 2016/10/16 13:49
@@ -21,16 +21,16 @@ import butterknife.Bind;
  * 大会员界面
  */
 
-public class VipActivity extends RxAppCompatBaseActivity
+public class VipActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.collapsing_toolbar)
+    @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
 
-    @Bind(R.id.webView)
+    @BindView(R.id.webView)
     WebView mWebView;
 
 

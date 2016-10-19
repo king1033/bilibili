@@ -24,7 +24,7 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -36,30 +36,20 @@ import butterknife.OnClick;
 public class HomePageFragment extends RxLazyFragment
 {
 
-    @Bind(R.id.view_pager)
+    @BindView(R.id.view_pager)
     ViewPager mViewPager;
 
-    @Bind(R.id.sliding_tabs)
+    @BindView(R.id.sliding_tabs)
     SlidingTabLayout mSlidingTab;
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.search_view)
+    @BindView(R.id.search_view)
     MaterialSearchView mSearchView;
 
-    @Bind(R.id.toolbar_user_avatar)
+    @BindView(R.id.toolbar_user_avatar)
     CircleImageView mCircleImageView;
-
-    //随机头像设置数组
-    private static final int[] avatars = new int[]{
-            R.drawable.ic_avatar1, R.drawable.ic_avatar2,
-            R.drawable.ic_avatar3, R.drawable.ic_avatar4,
-            R.drawable.ic_avatar5, R.drawable.ic_avatar6,
-            R.drawable.ic_avatar7, R.drawable.ic_avatar8,
-            R.drawable.ic_avatar9, R.drawable.ic_avatar10,
-            R.drawable.ic_avatar11,
-            };
 
     public static HomePageFragment newInstance()
     {

@@ -26,7 +26,7 @@ import com.hotbitmapgg.ohmybilibili.widget.sectioned.SectionedRecyclerViewAdapte
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -41,13 +41,13 @@ import rx.schedulers.Schedulers;
 public class HomeRecommendedFragment extends RxLazyFragment
 {
 
-    @Bind(R.id.swipe_refresh_layout)
+    @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
-    @Bind(R.id.recycle)
+    @BindView(R.id.recycle)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.empty_layout)
+    @BindView(R.id.empty_layout)
     CustomEmptyView mCustomEmptyView;
 
     private List<RecommendInfo.ResultBean> results = new ArrayList<>();
@@ -56,7 +56,6 @@ public class HomeRecommendedFragment extends RxLazyFragment
 
     private List<RecommendBannerInfo.DataBean> recommendBanners = new ArrayList<>();
 
-    //RecycleView是否正在刷新
     private boolean mIsRefreshing = false;
 
     private SectionedRecyclerViewAdapter mSectionedAdapter;
@@ -89,12 +88,13 @@ public class HomeRecommendedFragment extends RxLazyFragment
         if (!isPrepared || !isVisible)
             return;
 
-        showProgressBar();
+        initRefreshLayout();
         initRecyclerView();
         isPrepared = false;
     }
 
-    private void initRecyclerView()
+    @Override
+    protected void initRecyclerView()
     {
 
         mSectionedAdapter = new SectionedRecyclerViewAdapter();
@@ -124,7 +124,8 @@ public class HomeRecommendedFragment extends RxLazyFragment
         setRecycleNoScroll();
     }
 
-    private void showProgressBar()
+    @Override
+    protected void initRefreshLayout()
     {
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -132,18 +133,18 @@ public class HomeRecommendedFragment extends RxLazyFragment
 
             mSwipeRefreshLayout.setRefreshing(true);
             mIsRefreshing = true;
-            getHomeRecommendedData();
+            loadData();
         });
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             clearData();
-            getHomeRecommendedData();
+            loadData();
         });
     }
 
-
-    private void getHomeRecommendedData()
+    @Override
+    protected void loadData()
     {
 
         RetrofitHelper.getHomeRecommendedApi()
@@ -193,8 +194,8 @@ public class HomeRecommendedFragment extends RxLazyFragment
         }
     }
 
-
-    private void finishTask()
+    @Override
+    protected void finishTask()
     {
 
         mSwipeRefreshLayout.setRefreshing(false);

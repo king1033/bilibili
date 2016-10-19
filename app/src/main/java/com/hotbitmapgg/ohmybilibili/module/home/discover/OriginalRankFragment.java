@@ -18,7 +18,7 @@ import com.hotbitmapgg.ohmybilibili.utils.ToastUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -32,10 +32,10 @@ import rx.schedulers.Schedulers;
 public class OriginalRankFragment extends RxLazyFragment
 {
 
-    @Bind(R.id.swipe_refresh_layout)
+    @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
 
-    @Bind(R.id.recycle)
+    @BindView(R.id.recycle)
     RecyclerView mRecyclerView;
 
     private String order;
@@ -72,7 +72,8 @@ public class OriginalRankFragment extends RxLazyFragment
         initRecyclerView();
     }
 
-    private void initRefreshLayout()
+    @Override
+    protected void initRefreshLayout()
     {
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -80,17 +81,18 @@ public class OriginalRankFragment extends RxLazyFragment
 
             mSwipeRefreshLayout.setRefreshing(true);
             mIsRefreshing = true;
-            getOriginalRank();
+            loadData();
         });
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             mIsRefreshing = true;
             originalRanks.clear();
-            getOriginalRank();
+            loadData();
         });
     }
 
-    private void getOriginalRank()
+    @Override
+    protected void loadData()
     {
 
         RetrofitHelper.getOriginalRankApi()
@@ -111,7 +113,8 @@ public class OriginalRankFragment extends RxLazyFragment
                 });
     }
 
-    private void finishTask()
+    @Override
+    protected void finishTask()
     {
 
         mIsRefreshing = false;
@@ -119,7 +122,8 @@ public class OriginalRankFragment extends RxLazyFragment
         mAdapter.notifyDataSetChanged();
     }
 
-    private void initRecyclerView()
+    @Override
+    protected void initRecyclerView()
     {
 
         mRecyclerView.setHasFixedSize(true);

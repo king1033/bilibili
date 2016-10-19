@@ -15,7 +15,7 @@ import com.hotbitmapgg.ohmybilibili.widget.CustomEmptyView;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.EXTRA_DATA;
 
@@ -29,10 +29,10 @@ import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.EXTRA_DATA;
 public class UserCoinsVideoFragment extends RxLazyFragment
 {
 
-    @Bind(R.id.recycle)
+    @BindView(R.id.recycle)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.empty_view)
+    @BindView(R.id.empty_view)
     CustomEmptyView mCustomEmptyView;
 
     private List<UserCoinsInfo.DataBean.ListBean> userCoins = new ArrayList<>();
@@ -65,7 +65,8 @@ public class UserCoinsVideoFragment extends RxLazyFragment
         initRecyclerView();
     }
 
-    private void initRecyclerView()
+    @Override
+    protected void initRecyclerView()
     {
 
         userCoins.addAll(userCoinsInfo.getData().getList());
@@ -78,7 +79,6 @@ public class UserCoinsVideoFragment extends RxLazyFragment
         if (userCoins.isEmpty())
             initEmptyLayout();
     }
-
 
     private void initEmptyLayout()
     {

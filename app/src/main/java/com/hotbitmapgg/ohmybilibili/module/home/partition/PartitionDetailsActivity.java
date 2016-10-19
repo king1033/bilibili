@@ -14,11 +14,11 @@ import android.widget.TextView;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.adapter.pager.PartitionMorePagerAdapter;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 import com.hotbitmapgg.ohmybilibili.entity.partition.PartitionInfo;
 import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 /**
  * Created by hcc on 16/8/4 21:18
@@ -26,16 +26,16 @@ import butterknife.Bind;
  * <p/>
  * 分区详情界面
  */
-public class PartitionDetailsActivity extends RxAppCompatBaseActivity
+public class PartitionDetailsActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.view_pager)
+    @BindView(R.id.view_pager)
     ViewPager mViewPager;
 
-    @Bind(R.id.sliding_tabs)
+    @BindView(R.id.sliding_tabs)
     SlidingTabLayout mSlidingTab;
 
     private PartitionInfo.DataBean mDataBean;
@@ -54,9 +54,8 @@ public class PartitionDetailsActivity extends RxAppCompatBaseActivity
 
         Bundle mBundle = getIntent().getExtras();
         if (mBundle != null)
-        {
             mDataBean = mBundle.getParcelable(ConstantUtils.EXTRA_PARTITION);
-        }
+
 
         initViewPager();
     }

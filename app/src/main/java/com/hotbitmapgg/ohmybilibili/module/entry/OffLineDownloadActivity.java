@@ -8,13 +8,13 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 import com.hotbitmapgg.ohmybilibili.utils.CommonUtils;
 import com.hotbitmapgg.ohmybilibili.utils.ToastUtil;
 import com.hotbitmapgg.ohmybilibili.widget.CustomEmptyView;
 import com.hotbitmapgg.ohmybilibili.widget.progressbar.NumberProgressBar;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 /**
  * Created by hcc on 16/8/7 14:12
@@ -22,16 +22,16 @@ import butterknife.Bind;
  * <p/>
  * 离线缓存
  */
-public class OffLineDownloadActivity extends RxAppCompatBaseActivity
+public class OffLineDownloadActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.progress_bar)
+    @BindView(R.id.progress_bar)
     NumberProgressBar mProgressBar;
 
-    @Bind(R.id.cache_size_text)
+    @BindView(R.id.cache_size_text)
     TextView mCacheSize;
 
 

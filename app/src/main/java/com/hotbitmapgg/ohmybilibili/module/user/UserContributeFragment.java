@@ -20,7 +20,7 @@ import com.hotbitmapgg.ohmybilibili.widget.CustomEmptyView;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -38,10 +38,10 @@ public class UserContributeFragment extends RxLazyFragment
 {
 
 
-    @Bind(R.id.recycle)
+    @BindView(R.id.recycle)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.empty_view)
+    @BindView(R.id.empty_view)
     CustomEmptyView mCustomEmptyView;
 
     private int mid;
@@ -85,15 +85,14 @@ public class UserContributeFragment extends RxLazyFragment
         mid = getArguments().getInt(EXTRA_MID);
         UserContributeInfo userContributeInfo = getArguments().getParcelable(EXTRA_DATA);
 
-
         if (userContributeInfo != null)
-        {
             userContributes.addAll(userContributeInfo.getData().getVlist());
-        }
+
         initRecyclerView();
     }
 
-    private void getUserContributeVideos()
+    @Override
+    protected void loadData()
     {
 
         RetrofitHelper.getUserContributeVideoApi()
@@ -116,8 +115,8 @@ public class UserContributeFragment extends RxLazyFragment
                 });
     }
 
-
-    private void initRecyclerView()
+    @Override
+    protected void initRecyclerView()
     {
 
         mRecyclerView.setHasFixedSize(true);
@@ -136,7 +135,7 @@ public class UserContributeFragment extends RxLazyFragment
             {
 
                 pageNum++;
-                getUserContributeVideos();
+                loadData();
                 loadMoreView.setVisibility(View.VISIBLE);
             }
         });
@@ -148,7 +147,8 @@ public class UserContributeFragment extends RxLazyFragment
                 userContributes.get(position).getAid(), userContributes.get(position).getPic()));
     }
 
-    private void finishTask()
+    @Override
+    protected void finishTask()
     {
 
         loadMoreView.setVisibility(View.GONE);
@@ -158,7 +158,6 @@ public class UserContributeFragment extends RxLazyFragment
         else
             mAdapter.notifyDataSetChanged();
     }
-
 
     private void createHeadView()
     {

@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 import com.hotbitmapgg.ohmybilibili.entity.search.SearchResult;
 import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
 import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -45,28 +45,28 @@ import rx.schedulers.Schedulers;
  * <p/>
  * 全站搜索界面
  */
-public class TotalStationSearchActivity extends RxAppCompatBaseActivity
+public class TotalStationSearchActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.sliding_tabs)
+    @BindView(R.id.sliding_tabs)
     SlidingTabLayout mSlidingTabLayout;
 
-    @Bind(R.id.view_pager)
+    @BindView(R.id.view_pager)
     ViewPager mViewPager;
 
-    @Bind(R.id.iv_search_loading)
+    @BindView(R.id.iv_search_loading)
     ImageView mLoadingView;
 
-    @Bind(R.id.search_img)
+    @BindView(R.id.search_img)
     ImageView mSearchBtn;
 
-    @Bind(R.id.search_edit)
+    @BindView(R.id.search_edit)
     EditText mSearchEdit;
 
-    @Bind(R.id.search_text_clear)
+    @BindView(R.id.search_text_clear)
     ImageView mSearchTextClear;
 
-    @Bind(R.id.search_layout)
+    @BindView(R.id.search_layout)
     LinearLayout mSearchLayout;
 
     private String content;
@@ -219,7 +219,8 @@ public class TotalStationSearchActivity extends RxAppCompatBaseActivity
                 });
     }
 
-    private void finishTask()
+    @Override
+    public void finishTask()
     {
 
         hideSearchAnim();

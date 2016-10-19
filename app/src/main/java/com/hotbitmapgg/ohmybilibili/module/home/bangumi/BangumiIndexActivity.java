@@ -12,7 +12,7 @@ import android.view.View;
 import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.adapter.BangumiIndexAdapter;
 import com.hotbitmapgg.ohmybilibili.adapter.helper.HeaderViewRecyclerAdapter;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 import com.hotbitmapgg.ohmybilibili.entity.bangumi.BangumiIndex;
 import com.hotbitmapgg.ohmybilibili.entity.bangumi.BangumiIndexTag;
 import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -32,16 +32,16 @@ import rx.schedulers.Schedulers;
  * <p/>
  * 番剧索引界面
  */
-public class BangumiIndexActivity extends RxAppCompatBaseActivity
+public class BangumiIndexActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.recycle)
+    @BindView(R.id.recycle)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.circle_progress)
+    @BindView(R.id.circle_progress)
     CircleProgressView mCircleProgressView;
 
     private List<BangumiIndexTag> bangumiIndexTags = new ArrayList<>();
@@ -66,10 +66,11 @@ public class BangumiIndexActivity extends RxAppCompatBaseActivity
     public void initViews(Bundle savedInstanceState)
     {
 
-        getBangumiIndex();
+        loadData();
     }
 
-    private void initRecyclerView()
+    @Override
+    public void initRecyclerView()
     {
 
         mRecyclerView.setHasFixedSize(true);
@@ -112,7 +113,8 @@ public class BangumiIndexActivity extends RxAppCompatBaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void getBangumiIndex()
+    @Override
+    public void loadData()
     {
 
         RetrofitHelper.getBangumiIndexApi()
@@ -132,22 +134,24 @@ public class BangumiIndexActivity extends RxAppCompatBaseActivity
                 });
     }
 
-
-    private void showProgressBar()
+    @Override
+    public void showProgressBar()
     {
 
         mCircleProgressView.setVisibility(View.VISIBLE);
         mCircleProgressView.spin();
     }
 
-    private void hideProgressBar()
+    @Override
+    public void hideProgressBar()
     {
 
         mCircleProgressView.setVisibility(View.GONE);
         mCircleProgressView.stopSpinning();
     }
 
-    private void finishTask()
+    @Override
+    public void finishTask()
     {
 
         mergerIndexTags();

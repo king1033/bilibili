@@ -23,15 +23,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 import com.hotbitmapgg.ohmybilibili.utils.ClipboardUtils;
 import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
 import com.hotbitmapgg.ohmybilibili.utils.ToastUtil;
 import com.hotbitmapgg.ohmybilibili.widget.CircleProgressView;
 
-import butterknife.Bind;
-
-import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.EXTRA_URL;
+import butterknife.BindView;
 
 /**
  * Created by hcc on 16/8/7 14:12
@@ -39,16 +37,16 @@ import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.EXTRA_URL;
  * <p/>
  * 浏览器界面
  */
-public class BrowserActivity extends RxAppCompatBaseActivity
+public class BrowserActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.circle_progress)
+    @BindView(R.id.circle_progress)
     CircleProgressView progressBar;
 
-    @Bind(R.id.webView)
+    @BindView(R.id.webView)
     WebView mWebView;
 
     private final Handler mHandler = new Handler();

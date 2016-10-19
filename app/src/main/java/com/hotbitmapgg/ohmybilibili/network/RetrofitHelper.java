@@ -5,14 +5,13 @@ import com.hotbitmapgg.ohmybilibili.OhMyBiliBiliApp;
 import com.hotbitmapgg.ohmybilibili.network.api.ActivityCenterService;
 import com.hotbitmapgg.ohmybilibili.network.api.AllareasRankService;
 import com.hotbitmapgg.ohmybilibili.network.api.AuthorRecommendedService;
-import com.hotbitmapgg.ohmybilibili.network.api.BangumiDetailsRecommendService;
 import com.hotbitmapgg.ohmybilibili.network.api.BangumiIndexService;
 import com.hotbitmapgg.ohmybilibili.network.api.BangumiRecommendService;
 import com.hotbitmapgg.ohmybilibili.network.api.BangumiScheduleService;
 import com.hotbitmapgg.ohmybilibili.network.api.BiliBiliLiveService;
 import com.hotbitmapgg.ohmybilibili.network.api.HDVideoService;
+import com.hotbitmapgg.ohmybilibili.network.api.HomeBangumiRecommendService;
 import com.hotbitmapgg.ohmybilibili.network.api.HotSearchTagService;
-import com.hotbitmapgg.ohmybilibili.network.api.Html5VideoUrlService;
 import com.hotbitmapgg.ohmybilibili.network.api.LiveUrlService;
 import com.hotbitmapgg.ohmybilibili.network.api.NewBangumiSerialService;
 import com.hotbitmapgg.ohmybilibili.network.api.OriginalRankService;
@@ -154,17 +153,17 @@ public class RetrofitHelper
      * @return
      */
 
-    public static BangumiRecommendService getBnagumiRecommendApi()
+    public static HomeBangumiRecommendService getHomeBnagumiRecommendApi()
     {
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_BASE_URL)
+                .baseUrl(BANGUMI_BASE_URL)
                 .client(mOkHttpClient)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        return retrofit.create(BangumiRecommendService.class);
+        return retrofit.create(HomeBangumiRecommendService.class);
     }
 
     /**
@@ -238,25 +237,6 @@ public class RetrofitHelper
                 .build();
 
         return retrofit.create(PartitionMoreService.class);
-    }
-
-
-    /**
-     * 获取HTML5视频播放地址
-     *
-     * @return
-     */
-    public static Html5VideoUrlService getHtml5VideoPlayerUrlApi()
-    {
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(MAIN_BASE_URL)
-                .client(mOkHttpClient)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        return retrofit.create(Html5VideoUrlService.class);
     }
 
 
@@ -466,11 +446,11 @@ public class RetrofitHelper
     }
 
     /**
-     * 获取番剧详情中的番剧推荐数据
+     * 获取番剧推荐
      *
      * @return
      */
-    public static BangumiDetailsRecommendService getBangumiDetailsRecommendedApi()
+    public static BangumiRecommendService getBangumiRecommendedApi()
     {
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -480,7 +460,7 @@ public class RetrofitHelper
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        return retrofit.create(BangumiDetailsRecommendService.class);
+        return retrofit.create(BangumiRecommendService.class);
     }
 
 

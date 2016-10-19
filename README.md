@@ -1,4 +1,4 @@
-# Imitation Bilibili Android Client
+# An Unofficial Bilibili Android Client
 
 [![Wercker](https://img.shields.io/badge/Android%20Client-bilibili-brightgreen.svg)](https://github.com/HotBitmapGG/bilibili) [![Issue Stats](https://img.shields.io/issuestats/i/github/strongloop/express.svg?maxAge=2592000)]()  [![TeamCity CodeBetter](https://img.shields.io/teamcity/codebetter/bt428.svg?maxAge=2592000)]() [![Crates.io](https://img.shields.io/crates/l/rustc-serialize.svg?maxAge=2592000)]()
 
@@ -29,7 +29,7 @@
 * 10.其他的一些仿官方的界面实现细节等。
 
 
-## The Api documentation
+## Api documentation
 
 * BiliBili API / REST service written in Go
 [WhiteBlue](https://github.com/WhiteBlue)/**[bilibili-go](https://github.com/WhiteBlue/bilibili-go)**
@@ -54,7 +54,7 @@
  * 后期会抽时间使用MVP来重构该项目,让整体架构更清晰。
 
 
-## The statement
+## Statement
 
 如果该项目有侵犯B站版权问题，或被告知需停止共享与使用，本人会及时删除此页面与整个项目。
 

@@ -29,7 +29,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 import com.hotbitmapgg.ohmybilibili.entity.video.VideoDetails;
 import com.hotbitmapgg.ohmybilibili.event.AppBarStateChangeEvent;
 import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
@@ -41,7 +41,7 @@ import com.hotbitmapgg.ohmybilibili.utils.SystemBarHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -51,34 +51,34 @@ import rx.schedulers.Schedulers;
  * <p/>
  * 视频详情界面
  */
-public class VideoDetailsActivity extends RxAppCompatBaseActivity
+public class VideoDetailsActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.collapsing_toolbar)
+    @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbarLayout;
 
-    @Bind(R.id.video_preview)
+    @BindView(R.id.video_preview)
     ImageView mVideoPreview;
 
-    @Bind(R.id.tab_layout)
+    @BindView(R.id.tab_layout)
     SlidingTabLayout mSlidingTabLayout;
 
-    @Bind(R.id.view_pager)
+    @BindView(R.id.view_pager)
     ViewPager mViewPager;
 
-    @Bind(R.id.fab)
+    @BindView(R.id.fab)
     FloatingActionButton mFAB;
 
-    @Bind(R.id.app_bar_layout)
+    @BindView(R.id.app_bar_layout)
     AppBarLayout mAppBarLayout;
 
-    @Bind(R.id.tv_player)
+    @BindView(R.id.tv_player)
     TextView mTvPlayer;
 
-    @Bind(R.id.tv_av)
+    @BindView(R.id.tv_av)
     TextView mAvText;
 
     private List<Fragment> fragments = new ArrayList<>();
@@ -119,12 +119,13 @@ public class VideoDetailsActivity extends RxAppCompatBaseActivity
                 .into(mVideoPreview);
 
 
-        getVideoInfo();
+        loadData();
 
         mFAB.setClickable(false);
         mFAB.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.gray_20)));
         mFAB.setTranslationY(-getResources().getDimension(R.dimen.floating_action_button_size_half));
-        mFAB.setOnClickListener(v -> VideoPlayerActivity.launch(VideoDetailsActivity.this, av));
+        mFAB.setOnClickListener(v -> VideoPlayerActivity.launch(VideoDetailsActivity.this,
+                mVideoDetails.getList().videoAdditional.cid,mVideoDetails.getTitle()));
 
         mAppBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> setViewsTranslation(verticalOffset));
         mAppBarLayout.addOnOffsetChangedListener(new AppBarStateChangeEvent()
@@ -245,7 +246,8 @@ public class VideoDetailsActivity extends RxAppCompatBaseActivity
     }
 
 
-    public void getVideoInfo()
+    @Override
+    public void loadData()
     {
 
         RetrofitHelper.getVideoDetailsApi()
@@ -256,7 +258,7 @@ public class VideoDetailsActivity extends RxAppCompatBaseActivity
                 .subscribe(videoDetails -> {
 
                     mVideoDetails = videoDetails;
-                    finishGetTask();
+                    finishTask();
                 }, throwable -> {
 
                     mFAB.setClickable(false);
@@ -265,7 +267,8 @@ public class VideoDetailsActivity extends RxAppCompatBaseActivity
                 });
     }
 
-    private void finishGetTask()
+    @Override
+    public void finishTask()
     {
 
         mFAB.setClickable(true);

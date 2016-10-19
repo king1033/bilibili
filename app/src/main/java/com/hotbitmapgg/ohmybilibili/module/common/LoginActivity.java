@@ -11,13 +11,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 import com.hotbitmapgg.ohmybilibili.utils.CommonUtils;
 import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
 import com.hotbitmapgg.ohmybilibili.utils.PreferenceUtils;
 import com.hotbitmapgg.ohmybilibili.utils.ToastUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -26,25 +26,25 @@ import butterknife.OnClick;
  * <p/>
  * 登录界面
  */
-public class LoginActivity extends RxAppCompatBaseActivity
+public class LoginActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @Bind(R.id.iv_icon_left)
+    @BindView(R.id.iv_icon_left)
     ImageView mLeftLogo;
 
-    @Bind(R.id.iv_icon_right)
+    @BindView(R.id.iv_icon_right)
     ImageView mRightLogo;
 
-    @Bind(R.id.delete_username)
+    @BindView(R.id.delete_username)
     ImageView mDeleteUserName;
 
-    @Bind(R.id.et_username)
+    @BindView(R.id.et_username)
     EditText et_username;
 
-    @Bind(R.id.et_password)
+    @BindView(R.id.et_password)
     EditText et_password;
 
     @Override

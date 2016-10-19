@@ -16,7 +16,7 @@ import com.hotbitmapgg.ohmybilibili.widget.CustomEmptyView;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.EXTRA_DATA;
 
@@ -30,10 +30,10 @@ import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.EXTRA_DATA;
 public class UserChaseBangumiFragment extends RxLazyFragment
 {
 
-    @Bind(R.id.recycle)
+    @BindView(R.id.recycle)
     RecyclerView mRecyclerView;
 
-    @Bind(R.id.empty_view)
+    @BindView(R.id.empty_view)
     CustomEmptyView mCustomEmptyView;
 
     private List<UserChaseBangumiInfo.DataBean.ResultBean> userChaseBangumis = new ArrayList<>();
@@ -65,7 +65,8 @@ public class UserChaseBangumiFragment extends RxLazyFragment
         initRecyclerView();
     }
 
-    private void initRecyclerView()
+    @Override
+    protected void initRecyclerView()
     {
 
         userChaseBangumis.addAll(userChaseBangumiInfo.getData().getResult());
@@ -88,7 +89,6 @@ public class UserChaseBangumiFragment extends RxLazyFragment
         if (userChaseBangumis.isEmpty())
             initEmptyLayout();
     }
-
 
     private void initEmptyLayout()
     {

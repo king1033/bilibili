@@ -6,9 +6,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.base.RxAppCompatBaseActivity;
+import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 
 /**
@@ -17,10 +17,10 @@ import butterknife.Bind;
  * <p/>
  * 关于我
  */
-public class HotBitmapGGInfoActivity extends RxAppCompatBaseActivity
+public class HotBitmapGGInfoActivity extends RxBaseActivity
 {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
     @Override
