@@ -1,23 +1,24 @@
 package com.hotbitmapgg.ohmybilibili.network;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
-import com.hotbitmapgg.ohmybilibili.OhMyBiliBiliApp;
+import com.hotbitmapgg.ohmybilibili.BilibiliApp;
 import com.hotbitmapgg.ohmybilibili.network.api.ActivityCenterService;
 import com.hotbitmapgg.ohmybilibili.network.api.AllareasRankService;
 import com.hotbitmapgg.ohmybilibili.network.api.AuthorRecommendedService;
 import com.hotbitmapgg.ohmybilibili.network.api.BangumiIndexService;
 import com.hotbitmapgg.ohmybilibili.network.api.BangumiRecommendService;
 import com.hotbitmapgg.ohmybilibili.network.api.BangumiScheduleService;
-import com.hotbitmapgg.ohmybilibili.network.api.BiliBiliLiveService;
 import com.hotbitmapgg.ohmybilibili.network.api.HDVideoService;
 import com.hotbitmapgg.ohmybilibili.network.api.HomeBangumiRecommendService;
 import com.hotbitmapgg.ohmybilibili.network.api.HotSearchTagService;
+import com.hotbitmapgg.ohmybilibili.network.api.LiveAppIndexService;
 import com.hotbitmapgg.ohmybilibili.network.api.LiveUrlService;
 import com.hotbitmapgg.ohmybilibili.network.api.NewBangumiSerialService;
 import com.hotbitmapgg.ohmybilibili.network.api.OriginalRankService;
-import com.hotbitmapgg.ohmybilibili.network.api.PartitionMoreService;
-import com.hotbitmapgg.ohmybilibili.network.api.PartitionTypeService;
 import com.hotbitmapgg.ohmybilibili.network.api.RecommendedService;
+import com.hotbitmapgg.ohmybilibili.network.api.RegionDetailsService;
+import com.hotbitmapgg.ohmybilibili.network.api.RegionRecommendService;
+import com.hotbitmapgg.ohmybilibili.network.api.RegionTypeService;
 import com.hotbitmapgg.ohmybilibili.network.api.SeasonNewBangumiService;
 import com.hotbitmapgg.ohmybilibili.network.api.SpecialTopicInfoService;
 import com.hotbitmapgg.ohmybilibili.network.api.SpecialTopicItemService;
@@ -94,7 +95,7 @@ public class RetrofitHelper
      * @return
      */
 
-    public static BiliBiliLiveService getBiliBiliLiveApi()
+    public static LiveAppIndexService getLiveAppIndexApi()
     {
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -104,7 +105,7 @@ public class RetrofitHelper
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
 
-        return retrofit.create(BiliBiliLiveService.class);
+        return retrofit.create(LiveAppIndexService.class);
     }
 
 
@@ -219,24 +220,6 @@ public class RetrofitHelper
                 .build();
 
         return retrofit.create(LiveUrlService.class);
-    }
-
-
-    /**
-     * 获取分区数据列表详情
-     *
-     * @return
-     */
-    public static PartitionMoreService getPartitionMoreApi()
-    {
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(HOST_API_BASE_URL)
-                .client(mOkHttpClient)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-
-        return retrofit.create(PartitionMoreService.class);
     }
 
 
@@ -523,7 +506,7 @@ public class RetrofitHelper
      *
      * @return
      */
-    public static PartitionTypeService getPartitionTypesApi()
+    public static RegionTypeService getPartitionTypesApi()
     {
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -533,7 +516,7 @@ public class RetrofitHelper
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        return retrofit.create(PartitionTypeService.class);
+        return retrofit.create(RegionTypeService.class);
     }
 
     /**
@@ -665,6 +648,43 @@ public class RetrofitHelper
 
 
     /**
+     * 获取分区推荐页数据
+     *
+     * @return
+     */
+    public static RegionRecommendService getRegionRecommendApi()
+    {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APP_BASE_URL)
+                .client(mOkHttpClient)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(RegionRecommendService.class);
+    }
+
+    /**
+     * 获取分区详情数据
+     *
+     * @return
+     */
+    public static RegionDetailsService getRegionDetailsApi()
+    {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(APP_BASE_URL)
+                .client(mOkHttpClient)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(RegionDetailsService.class);
+    }
+
+
+    /**
      * 初始化OKHttpClient
      * 设置缓存
      * 设置超时时间
@@ -683,12 +703,13 @@ public class RetrofitHelper
                 if (mOkHttpClient == null)
                 {
                     //设置Http缓存
-                    Cache cache = new Cache(new File(OhMyBiliBiliApp.getInstance()
+                    Cache cache = new Cache(new File(BilibiliApp.getInstance()
                             .getCacheDir(), "HttpCache"), 1024 * 1024 * 100);
 
                     mOkHttpClient = new OkHttpClient.Builder()
                             .cache(cache)
                             .addInterceptor(interceptor)
+                            .addNetworkInterceptor(new CacheInterceptor())
                             .addNetworkInterceptor(new StethoInterceptor())
                             .retryOnConnectionFailure(true)
                             .connectTimeout(30, TimeUnit.SECONDS)
@@ -703,8 +724,7 @@ public class RetrofitHelper
 
 
     /**
-     * 添加UA拦截器
-     * B站请求API文档需要加上UA
+     * 添加UA拦截器，B站请求API需要加上UA才能正常使用
      */
     private static class UserAgentInterceptor implements Interceptor
     {
@@ -719,6 +739,27 @@ public class RetrofitHelper
                     .addHeader("User-Agent", COMMON_UA_STR)
                     .build();
             return chain.proceed(requestWithUserAgent);
+        }
+    }
+
+
+    /**
+     * 为okhttp添加缓存，缓存时间为1天，
+     * 这里是考虑到服务器不支持缓存时，从而让okhttp支持缓存
+     */
+    private static class CacheInterceptor implements Interceptor
+    {
+
+        @Override
+        public Response intercept(Chain chain) throws IOException
+        {
+
+            Request request = chain.request();
+            return chain.proceed(request).newBuilder()
+                    .removeHeader("Pragma")
+                    .removeHeader("Cache-Control")
+                    .header("Cache-Control", "max-age=" + 3600 * 24)
+                    .build();
         }
     }
 }

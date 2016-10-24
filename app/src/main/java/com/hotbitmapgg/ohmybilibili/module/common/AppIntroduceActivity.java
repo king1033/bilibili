@@ -1,18 +1,21 @@
 package com.hotbitmapgg.ohmybilibili.module.common;
 
+import android.annotation.SuppressLint;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.base.RxBaseActivity;
-import com.hotbitmapgg.ohmybilibili.utils.SystemBarHelper;
+import com.hotbitmapgg.ohmybilibili.utils.ShareUtil;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
@@ -28,8 +31,12 @@ public class AppIntroduceActivity extends RxBaseActivity
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @BindView(R.id.collapsing_toolbar)
-    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.tv_version)
+    TextView mVersion;
+
+    @BindView(R.id.tv_network_diagnosis)
+    TextView mTvNetworkDiagnosis;
+
 
     @Override
     public int getLayoutId()
@@ -38,26 +45,23 @@ public class AppIntroduceActivity extends RxBaseActivity
         return R.layout.activity_app_introduce;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void initViews(Bundle savedInstanceState)
     {
 
+        mVersion.setText("v" + getVersion());
     }
 
     @Override
     public void initToolBar()
     {
 
+        mToolbar.setTitle("关于");
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-
-        mCollapsingToolbarLayout.setTitle(getString(R.string.about) + "v" + getVersion());
-
-        //设置StatusBar透明
-        SystemBarHelper.immersiveStatusBar(this);
-        SystemBarHelper.setHeightAndPadding(this, mToolbar);
     }
 
     @Override
@@ -86,5 +90,24 @@ public class AppIntroduceActivity extends RxBaseActivity
             e.printStackTrace();
             return getString(R.string.about_version);
         }
+    }
+
+    @OnClick(R.id.tv_share_app)
+    void shareApp()
+    {
+
+        ShareUtil.shareLink(getString(R.string.github_url),
+                getString(R.string.share_title), AppIntroduceActivity.this);
+    }
+
+    @OnClick(R.id.tv_feedback)
+    void showFeedbackDialog()
+    {
+
+        new AlertDialog.Builder(AppIntroduceActivity.this)
+                .setTitle(R.string.feedback_titlle)
+                .setMessage(R.string.feedback_message)
+                .setPositiveButton("确定", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }

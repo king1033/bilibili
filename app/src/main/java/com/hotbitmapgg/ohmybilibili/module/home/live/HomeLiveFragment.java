@@ -7,19 +7,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.hotbitmapgg.ohmybilibili.BilibiliApp;
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.adapter.LiveRecyclerAdapter;
+import com.hotbitmapgg.ohmybilibili.adapter.LiveAppIndexAdapter;
 import com.hotbitmapgg.ohmybilibili.base.RxLazyFragment;
-import com.hotbitmapgg.ohmybilibili.entity.live.LiveIndex;
-import com.hotbitmapgg.ohmybilibili.entity.live.Result;
-import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
 import com.hotbitmapgg.ohmybilibili.utils.SnackbarUtil;
 import com.hotbitmapgg.ohmybilibili.widget.CustomEmptyView;
 
 import butterknife.BindView;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -40,9 +36,9 @@ public class HomeLiveFragment extends RxLazyFragment
     @BindView(R.id.empty_layout)
     CustomEmptyView mCustomEmptyView;
 
-    private LiveIndex mLiveIndex;
+    private boolean mIsCacheRefresh = false;
 
-    private LiveRecyclerAdapter mLiveRecyclerAdapter;
+    private LiveAppIndexAdapter mLiveAppIndexAdapter;
 
 
     public static HomeLiveFragment newIntance()
@@ -64,28 +60,16 @@ public class HomeLiveFragment extends RxLazyFragment
     public void finishCreateView(Bundle state)
     {
 
-        isPrepared = true;
-        lazyLoad();
-    }
-
-    @Override
-    protected void lazyLoad()
-    {
-
-        if (!isPrepared || !isVisible)
-            return;
-
         initRefreshLayout();
         initRecyclerView();
-        isPrepared = false;
     }
 
     @Override
     protected void initRecyclerView()
     {
 
-        mLiveRecyclerAdapter = new LiveRecyclerAdapter(getActivity());
-        mRecyclerView.setAdapter(mLiveRecyclerAdapter);
+        mLiveAppIndexAdapter = new LiveAppIndexAdapter(getActivity());
+        mRecyclerView.setAdapter(mLiveAppIndexAdapter);
         GridLayoutManager layout = new GridLayoutManager(getActivity(), 12);
         layout.setOrientation(LinearLayoutManager.VERTICAL);
         layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup()
@@ -95,7 +79,7 @@ public class HomeLiveFragment extends RxLazyFragment
             public int getSpanSize(int position)
             {
 
-                return mLiveRecyclerAdapter.getSpanSize(position);
+                return mLiveAppIndexAdapter.getSpanSize(position);
             }
         });
 
@@ -107,8 +91,10 @@ public class HomeLiveFragment extends RxLazyFragment
     {
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        mSwipeRefreshLayout.setOnRefreshListener(this::loadData);
-
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mIsCacheRefresh = true;
+            loadData();
+        });
         mSwipeRefreshLayout.post(() -> {
 
             mSwipeRefreshLayout.setRefreshing(true);
@@ -120,24 +106,15 @@ public class HomeLiveFragment extends RxLazyFragment
     protected void loadData()
     {
 
-        RetrofitHelper.getBiliBiliLiveApi()
-                .getLiveIndex()
-                .compose(this.bindToLifecycle())
-                .flatMap(new Func1<Result<LiveIndex>,Observable<LiveIndex>>()
-                {
-
-                    @Override
-                    public Observable<LiveIndex> call(Result<LiveIndex> liveIndexResult)
-                    {
-
-                        return Observable.just(liveIndexResult.data);
-                    }
-                })
+        BilibiliApp.getInstance()
+                .getRepository()
+                .getLiveAppIndex(mIsCacheRefresh)
+                .compose(bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(liveIndex -> {
+                .subscribe(liveAppIndexInfoReply -> {
 
-                    mLiveIndex = liveIndex;
+                    mLiveAppIndexAdapter.setLiveInfo(liveAppIndexInfoReply.getData());
                     finishTask();
                 }, throwable -> {
                     initEmptyView();
@@ -153,7 +130,6 @@ public class HomeLiveFragment extends RxLazyFragment
         mCustomEmptyView.setEmptyImage(R.drawable.img_tips_error_load_error);
         mCustomEmptyView.setEmptyText("加载失败~(≧▽≦)~啦啦啦.");
         SnackbarUtil.showMessage(mRecyclerView, "数据加载失败,请重新加载或者检查网络是否链接");
-        mCustomEmptyView.reload(this::showProgressBar);
     }
 
     public void hideEmptyView()
@@ -170,8 +146,7 @@ public class HomeLiveFragment extends RxLazyFragment
 
         hideEmptyView();
         mSwipeRefreshLayout.setRefreshing(false);
-        mLiveRecyclerAdapter.setLiveIndex(mLiveIndex);
-        mLiveRecyclerAdapter.notifyDataSetChanged();
+        mLiveAppIndexAdapter.notifyDataSetChanged();
         mRecyclerView.scrollToPosition(0);
     }
 }

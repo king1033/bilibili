@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId "com.hotbitmapgg.ohmybilibili"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 24
         versionCode props.getAt("versionCode") as int
         versionName props['versionName']
@@ -49,8 +49,11 @@ android {
     }
 
     dexOptions{
-        javaMaxHeapSize "2g"
-        incremental true
+        javaMaxHeapSize "4g"
+    }
+
+    lintOptions {
+        abortOnError false
     }
 
     compileOptions {
@@ -72,7 +75,6 @@ dependencies {
     compile 'com.zhy:flowlayout-lib:1.0.1'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
-    compile 'com.google.code.gson:gson:2.6.2'
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
@@ -82,8 +84,6 @@ dependencies {
     compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.6.0'
     compile 'tv.danmaku.ijk.media:ijkplayer-armv5:0.6.1'
     compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.6.1'
-    compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.6.1'
-    compile 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.6.1'
     compile 'com.trello:rxlifecycle-components:0.6.1'
     compile 'com.jakewharton.rxbinding:rxbinding:0.3.0'
     compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.3.0'
@@ -93,6 +93,8 @@ dependencies {
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
     compile 'com.bilibili:magicasakura:0.1.1@aar'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
+    compile "com.github.VictorAlbertos.RxCache:runtime:1.6.4"
+    compile 'com.github.VictorAlbertos.Jolyglot:gson:0.0.3'
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }
