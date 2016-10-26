@@ -16,7 +16,7 @@
 
 * 游戏中心，话题中心，活动中心，原创排行榜，全区排行榜，离线缓存，周边商城，大会员界面的实现。
 
-* 全区搜索的实现，目前支持综合视频，番剧，话题的搜索。
+* 全站搜索的实现，搜索功能跟官方一致，支持综合，番剧，up主，影视，专题搜索。
 
 * 直播详情界面的实现，目前只简单的完成了直播基本功能，还在完善中。
 
@@ -39,7 +39,9 @@
 
 <a href="art/10.png"><img src="art/10.png" width="30%"/></a> <a href="art/11.png"><img src="art/11.png" width="30%"/></a> <a href="art/12.png"><img src="art/12.png" width="30%"/></a>
 
-<a href="art/13.png"><img src="art/13.png" width="30%"/></a> <a href="art/14.png"><img src="art/14.png" width="30%"/></a> <a href="art/15.png"><img src="art/15.png" width="30%"/></a>
+<a href="art/13.png"><img src="art/13.png" width="30%"/></a> <a href="art/005.png"><img src="art/005.png" width="30%"/></a> <a href="art/006.png"><img src="art/006.png" width="30%"/></a>
+
+<a href="art/007.png"><img src="art/007.png" width="30%"/></a> <a href="art/14.png"><img src="art/14.png" width="30%"/></a> <a href="art/15.png"><img src="art/15.png" width="30%"/></a>
 
 <a href="art/16.png"><img src="art/16.png" width="30%"/></a> <a href="art/17.png"><img src="art/17.png" width="30%"/></a> <a href="art/18.png"><img src="art/18.png" width="30%"/></a>
 
@@ -83,7 +85,7 @@
 
 ## Instructions
 
- * 由于该项目是业余时间开发，更新比较慢还请见谅，有任何意见，bug，问题都可以给我提Issuse，我会第一时间关注并解决.
+ * 如果你有任何意见，bug，问题都可以给我提Issuse，我会第一时间关注并解决.
 
  * Apk暂时不提供下载,因为还有一些界面功能没有做完,等全部完善后会上传到fir.im。
 

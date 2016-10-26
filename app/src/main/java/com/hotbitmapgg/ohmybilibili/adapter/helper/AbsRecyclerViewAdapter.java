@@ -63,7 +63,7 @@ public abstract class AbsRecyclerViewAdapter extends
     public interface OnItemClickListener
     {
 
-        public void onItemClick(int position, ClickableViewHolder holder);
+        void onItemClick(int position, ClickableViewHolder holder);
     }
 
     interface OnItemLongClickListener
@@ -115,7 +115,7 @@ public abstract class AbsRecyclerViewAdapter extends
                 && itemLongClickListener.onItemLongClick(position, holder));
     }
 
-    public class ClickableViewHolder extends RecyclerView.ViewHolder
+    public static class ClickableViewHolder extends RecyclerView.ViewHolder
     {
 
         private View parentView;
@@ -133,6 +133,7 @@ public abstract class AbsRecyclerViewAdapter extends
             return parentView;
         }
 
+        @SuppressWarnings("unchecked")
         public <T extends View> T $(@IdRes int id)
         {
 

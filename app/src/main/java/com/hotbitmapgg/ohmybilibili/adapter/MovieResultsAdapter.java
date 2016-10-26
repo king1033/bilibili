@@ -1,5 +1,6 @@
 package com.hotbitmapgg.ohmybilibili.adapter;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.adapter.helper.AbsRecyclerViewAdapter;
-import com.hotbitmapgg.ohmybilibili.entity.search.SearchResult;
-import com.hotbitmapgg.ohmybilibili.network.auxiliary.UrlHelper;
+import com.hotbitmapgg.ohmybilibili.entity.search.SearchMovieInfo;
 
 import java.util.List;
 
@@ -20,18 +20,18 @@ import java.util.List;
  * Created by hcc on 16/9/4 12:28
  * 100332338@qq.com
  * <p/>
- * 话题搜索结果Adapter
+ * 影视搜索结果Adapter
  */
-public class TopicResultsAdapter extends AbsRecyclerViewAdapter
+public class MovieResultsAdapter extends AbsRecyclerViewAdapter
 {
 
-    private List<SearchResult.ResultBean.TopicBean> topics;
+    private List<SearchMovieInfo.DataBean.ItemsBean> movies;
 
-    public TopicResultsAdapter(RecyclerView recyclerView, List<SearchResult.ResultBean.TopicBean> topics)
+    public MovieResultsAdapter(RecyclerView recyclerView, List<SearchMovieInfo.DataBean.ItemsBean> movies)
     {
 
         super(recyclerView);
-        this.topics = topics;
+        this.movies = movies;
     }
 
     @Override
@@ -40,9 +40,10 @@ public class TopicResultsAdapter extends AbsRecyclerViewAdapter
 
         bindContext(parent.getContext());
         return new ItemViewHolder(LayoutInflater.from(getContext()).
-                inflate(R.layout.item_search_topic, parent, false));
+                inflate(R.layout.item_search_movie, parent, false));
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(ClickableViewHolder holder, int position)
     {
@@ -50,19 +51,17 @@ public class TopicResultsAdapter extends AbsRecyclerViewAdapter
         if (holder instanceof ItemViewHolder)
         {
             ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-            SearchResult.ResultBean.TopicBean topicBean = topics.get(position);
+            SearchMovieInfo.DataBean.ItemsBean itemsBean = movies.get(position);
 
             Glide.with(getContext())
-                    .load(UrlHelper.getClearVideoPreviewUrl(topicBean.getCover()))
+                    .load(itemsBean.getCover())
                     .centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.bili_default_image_tv)
                     .dontAnimate()
-                    .into(itemViewHolder.mTopicPic);
+                    .placeholder(R.drawable.ico_user_default)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(itemViewHolder.mImage);
 
-            itemViewHolder.mTopicTitle.setText(topicBean.getTitle());
-            itemViewHolder.mUserName.setText(topicBean.getAuthor());
-            itemViewHolder.mTopicDetails.setText(topicBean.getDescription());
+            itemViewHolder.mTitle.setText(itemsBean.getTitle());
         }
 
         super.onBindViewHolder(holder, position);
@@ -72,29 +71,23 @@ public class TopicResultsAdapter extends AbsRecyclerViewAdapter
     public int getItemCount()
     {
 
-        return topics.size();
+        return movies.size();
     }
 
     public class ItemViewHolder extends ClickableViewHolder
     {
 
-        ImageView mTopicPic;
+        ImageView mImage;
 
-        TextView mTopicTitle;
-
-        TextView mUserName;
-
-        TextView mTopicDetails;
+        TextView mTitle;
 
         public ItemViewHolder(View itemView)
         {
 
             super(itemView);
 
-            mTopicPic = $(R.id.item_img);
-            mTopicTitle = $(R.id.item_title);
-            mUserName = $(R.id.item_user_name);
-            mTopicDetails = $(R.id.item_details);
+            mImage = $(R.id.item_img);
+            mTitle = $(R.id.item_title);
         }
     }
 }
