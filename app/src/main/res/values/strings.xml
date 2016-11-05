@@ -13,10 +13,7 @@
     <string name="app_name">哔哩哔哩</string>
     <string name="info_play_times_format">%d</string>
     <string name="info_reviews_format">%d</string>
-    <string name="info_following_format">关注 %d</string>
-    <string name="info_fans_format">粉丝 %d</string>
     <string name="hotbitmapgg">hotBitmapGG</string>
-    <string name="github">GitHub: </string>
     <string name="github_link">https://github.com/HotBitmapGG</string>
     <string name="sina_weibo_link">新浪微博:http://m.weibo.cn/users/3223089177/qq</string>
     <string name="jianshu_link">简书:http://www.jianshu.com/notebooks/5181955/latest</string>
@@ -32,7 +29,6 @@
     <string name="sp_collection">收藏:</string>
     <string name="sp_introduction">专题简介:</string>
     <string name="sp_videos">专题剧集</string>
-    <string name="splash_title">copyright © 2015–2016 BILIBILI</string>
     <string name="goto_look">进去看看</string>
     <string name="discover_search_hint">搜索视频 番剧 up主或av号</string>
     <string name="everyone_in_the_search">大家都在搜</string>
@@ -56,7 +52,6 @@
     <string name="video_about">视频相关</string>
     <string name="more">更多</string>
     <string name="download">下载</string>
-    <string name="reload">重新加载</string>
     <string name="to_them">追番</string>
     <string name="time_line">放送表</string>
     <string name="index">索引</string>
@@ -68,7 +63,7 @@
     <string name="change_recommend">换一波推荐</string>
     <string name="rank">排行榜</string>
     <string name="topic">话题</string>
-    <string name="load_more">正在加载…</string>
+    <string name="load_more">加载中…</string>
     <string name="search_hint">搜索视频,番剧,up主或av号</string>
     <string name="danmaku_switch">弹幕开</string>
     <string name="play_immediately">立即播放</string>
@@ -162,5 +157,8 @@
     <string name="share_title">分享哔哩哔哩App</string>
     <string name="feedback_titlle">意见反馈</string>
     <string name="feedback_message">如果您有任何意见或者发现了Bug，可以在GitHub上给我提Issuse，我会第一时间关注并解决，谢谢。</string>
+    <string name="load_more_no_text">╮(╯3╰)╭ 没有更多数据了</string>
+    <string name="about_tag">标签相关</string>
+    <string name="tag_edit">编辑</string>
 
 </resources>

@@ -24,7 +24,7 @@ import com.hotbitmapgg.ohmybilibili.entity.bangumi.SpecialTopic;
 import com.hotbitmapgg.ohmybilibili.entity.bangumi.SpecialTopicIResult;
 import com.hotbitmapgg.ohmybilibili.module.video.VideoDetailsActivity;
 import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
-import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
+import com.hotbitmapgg.ohmybilibili.utils.ConstantUtil;
 import com.hotbitmapgg.ohmybilibili.widget.CircleProgressView;
 
 import java.util.ArrayList;
@@ -105,9 +105,9 @@ public class SpecialDetailsActivity extends RxBaseActivity
         Intent intent = getIntent();
         if (intent != null)
         {
-            spid = Integer.parseInt(intent.getStringExtra(ConstantUtils.EXTRA_SPID));
-            title = intent.getStringExtra(ConstantUtils.EXTRA_TITLE);
-            season_id = intent.getIntExtra(ConstantUtils.EXTRA_SEASON_ID, 0);
+            spid = Integer.parseInt(intent.getStringExtra(ConstantUtil.EXTRA_SPID));
+            title = intent.getStringExtra(ConstantUtil.EXTRA_TITLE);
+            season_id = intent.getIntExtra(ConstantUtil.EXTRA_SEASON_ID, 0);
         }
 
         loadData();
@@ -117,6 +117,7 @@ public class SpecialDetailsActivity extends RxBaseActivity
     public void initToolBar()
     {
 
+        mToolbar.setTitle("专题详情");
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
@@ -193,8 +194,10 @@ public class SpecialDetailsActivity extends RxBaseActivity
         // 初始化界面数据
         Glide.with(SpecialDetailsActivity.this)
                 .load(cover)
+                .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.bili_default_image_tv)
+                .dontAnimate()
                 .into(mPreviewImage);
 
         mTitleText.setText(spTitle);
@@ -209,7 +212,6 @@ public class SpecialDetailsActivity extends RxBaseActivity
 
         mPlayTimeText.setText(String.valueOf(playCount));
         mVideoCountText.setText(count + "话");
-        mToolbar.setTitle(spTitle);
         mFavourite.setText(String.valueOf(favourite));
         mAttention.setText(String.valueOf(attention));
 
@@ -247,9 +249,9 @@ public class SpecialDetailsActivity extends RxBaseActivity
     {
 
         Intent mIntent = new Intent(activity, SpecialDetailsActivity.class);
-        mIntent.putExtra(ConstantUtils.EXTRA_SPID, spid);
-        mIntent.putExtra(ConstantUtils.EXTRA_TITLE, title);
-        mIntent.putExtra(ConstantUtils.EXTRA_SEASON_ID, seasonId);
+        mIntent.putExtra(ConstantUtil.EXTRA_SPID, spid);
+        mIntent.putExtra(ConstantUtil.EXTRA_TITLE, title);
+        mIntent.putExtra(ConstantUtil.EXTRA_SEASON_ID, seasonId);
         activity.startActivity(mIntent);
     }
 }

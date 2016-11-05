@@ -7,10 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.adapter.UserChaseBangumiAdapter;
 import com.hotbitmapgg.ohmybilibili.base.RxLazyFragment;
-import com.hotbitmapgg.ohmybilibili.entity.bangumi.MiddlewareBangumi;
 import com.hotbitmapgg.ohmybilibili.entity.user.UserChaseBangumiInfo;
-import com.hotbitmapgg.ohmybilibili.module.home.bangumi.BangumiDetailsActivity;
-import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
+import com.hotbitmapgg.ohmybilibili.utils.ConstantUtil;
 import com.hotbitmapgg.ohmybilibili.widget.CustomEmptyView;
 
 import java.util.ArrayList;
@@ -18,7 +16,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.EXTRA_DATA;
+import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtil.EXTRA_DATA;
 
 /**
  * Created by hcc on 2016/10/12 18:16
@@ -45,7 +43,7 @@ public class UserChaseBangumiFragment extends RxLazyFragment
 
         UserChaseBangumiFragment mFragment = new UserChaseBangumiFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(ConstantUtils.EXTRA_DATA, userChaseBangumiInfo);
+        bundle.putParcelable(ConstantUtil.EXTRA_DATA, userChaseBangumiInfo);
         mFragment.setArguments(bundle);
         return mFragment;
     }
@@ -76,15 +74,6 @@ public class UserChaseBangumiFragment extends RxLazyFragment
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener((position, holder) -> {
 
-            UserChaseBangumiInfo.DataBean.ResultBean resultBean = userChaseBangumis.get(position);
-            MiddlewareBangumi middlewareBangumi = new MiddlewareBangumi();
-            middlewareBangumi.setPic(resultBean.getCover());
-            middlewareBangumi.setTitle(resultBean.getTitle());
-            middlewareBangumi.setDescription(resultBean.getBrief());
-            middlewareBangumi.setFavorites(resultBean.getFavorites());
-            middlewareBangumi.setPlay(resultBean.getFavorites());
-            middlewareBangumi.setSeason_id(Integer.valueOf(resultBean.getSeason_id()));
-            BangumiDetailsActivity.launch(getActivity(), middlewareBangumi);
         });
         if (userChaseBangumis.isEmpty())
             initEmptyLayout();

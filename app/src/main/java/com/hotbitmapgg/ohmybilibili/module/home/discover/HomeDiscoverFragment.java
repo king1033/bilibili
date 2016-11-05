@@ -9,14 +9,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hotbitmapgg.ohmybilibili.BilibiliApp;
 import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.base.RxLazyFragment;
 import com.hotbitmapgg.ohmybilibili.entity.discover.HotSearchTag;
 import com.hotbitmapgg.ohmybilibili.module.common.BrowserActivity;
 import com.hotbitmapgg.ohmybilibili.module.entry.GameCentreActivity;
 import com.hotbitmapgg.ohmybilibili.module.search.TotalStationSearchActivity;
-import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
+import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
+import com.hotbitmapgg.ohmybilibili.utils.ConstantUtil;
 import com.zhy.view.flowlayout.FlowLayout;
 import com.zhy.view.flowlayout.TagAdapter;
 import com.zhy.view.flowlayout.TagFlowLayout;
@@ -81,11 +81,10 @@ public class HomeDiscoverFragment extends RxLazyFragment
     private void getTags()
     {
 
-        BilibiliApp.getInstance()
-                .getRepository()
-                .getHotSearchTags(false)
+       RetrofitHelper.getHotSearchTagsApi()
+                .getHotSearchTags()
                 .compose(bindToLifecycle())
-                .map(hotSearchTagReply -> hotSearchTagReply.getData().getList())
+                .map(HotSearchTag::getList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(listBeans -> {
@@ -102,7 +101,7 @@ public class HomeDiscoverFragment extends RxLazyFragment
     {
 
         //获取热搜标签集合前9个默认显示
-        List<HotSearchTag.ListBean> frontTags = hotSearchTags.subList(0, 9);
+        List<HotSearchTag.ListBean> frontTags = hotSearchTags.subList(0, 8);
         mTagFlowLayout.setAdapter(new TagAdapter<HotSearchTag.ListBean>(frontTags)
         {
 
@@ -228,6 +227,6 @@ public class HomeDiscoverFragment extends RxLazyFragment
     void startShop()
     {
 
-        BrowserActivity.launch(getActivity(), ConstantUtils.SHOP_URL, "bilibili - 周边商城");
+        BrowserActivity.launch(getActivity(), ConstantUtil.SHOP_URL, "bilibili - 周边商城");
     }
 }

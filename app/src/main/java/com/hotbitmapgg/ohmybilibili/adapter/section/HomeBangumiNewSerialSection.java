@@ -13,8 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.entity.bangumi.MiddlewareBangumi;
-import com.hotbitmapgg.ohmybilibili.entity.bangumi.NewBangumiSerial;
+import com.hotbitmapgg.ohmybilibili.entity.bangumi.BangumiAppIndexInfo;
 import com.hotbitmapgg.ohmybilibili.module.home.bangumi.BangumiDetailsActivity;
 import com.hotbitmapgg.ohmybilibili.module.home.bangumi.NewBangumiSerialActivity;
 import com.hotbitmapgg.ohmybilibili.utils.NumberUtil;
@@ -37,10 +36,10 @@ public class HomeBangumiNewSerialSection extends StatelessSection
 
     private Context mContext;
 
-    private List<NewBangumiSerial.ListBean> newBangumiSerials;
+    private List<BangumiAppIndexInfo.ResultBean.SerializingBean> newBangumiSerials;
 
 
-    public HomeBangumiNewSerialSection(Context context, List<NewBangumiSerial.ListBean> newBangumiSerials)
+    public HomeBangumiNewSerialSection(Context context, List<BangumiAppIndexInfo.ResultBean.SerializingBean> newBangumiSerials)
     {
 
         super(R.layout.layout_home_bangumi_new_serial_head, R.layout.layout_home_bangumi_new_serial_body);
@@ -52,7 +51,7 @@ public class HomeBangumiNewSerialSection extends StatelessSection
     public int getContentItemsTotal()
     {
 
-        return 6;
+        return newBangumiSerials.size();
     }
 
     @Override
@@ -68,33 +67,22 @@ public class HomeBangumiNewSerialSection extends StatelessSection
     {
 
         ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-        NewBangumiSerial.ListBean listBean = newBangumiSerials.get(position);
+        BangumiAppIndexInfo.ResultBean.SerializingBean serializingBean = newBangumiSerials.get(position);
 
         Glide.with(mContext)
-                .load(listBean.getCover())
+                .load(serializingBean.getCover())
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.bili_default_image_tv)
                 .dontAnimate()
                 .into(itemViewHolder.mImage);
 
-        itemViewHolder.mTitle.setText(listBean.getTitle());
-        itemViewHolder.mPlay.setText(NumberUtil.converString(listBean.getPlay_count()) + "人在看");
-        itemViewHolder.mUpdate.setText("更新至第" + listBean.getBgmcount() + "话");
+        itemViewHolder.mTitle.setText(serializingBean.getTitle());
+        itemViewHolder.mPlay.setText(NumberUtil.converString(serializingBean.getWatching_count()) + "人在看");
+        itemViewHolder.mUpdate.setText("更新至第" + serializingBean.getNewest_ep_index() + "话");
 
-        itemViewHolder.mCardView.setOnClickListener(v -> {
-            MiddlewareBangumi middlewareBangumi = new MiddlewareBangumi();
-            middlewareBangumi.setPic(listBean.getCover());
-            middlewareBangumi.setTitle(listBean.getTitle());
-            middlewareBangumi.setSpid(listBean.getSpid());
-            middlewareBangumi.setSeason_id(listBean.getSeason_id());
-            middlewareBangumi.setFavorites(listBean.getFavorites());
-            middlewareBangumi.setPlay(listBean.getPlay_count());
-            middlewareBangumi.setWeekday(listBean.getWeekday());
-            middlewareBangumi.setCreate(listBean.getLastupdate_at());
-            middlewareBangumi.setCount(Integer.valueOf(listBean.getBgmcount()));
-            BangumiDetailsActivity.launch((Activity) mContext, middlewareBangumi);
-        });
+        itemViewHolder.mCardView.setOnClickListener(v -> BangumiDetailsActivity.launch(
+                (Activity) mContext, serializingBean.getSeason_id()));
     }
 
     @Override

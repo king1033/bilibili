@@ -22,6 +22,7 @@ import com.hotbitmapgg.ohmybilibili.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
@@ -50,9 +51,9 @@ public class ActivityCenterActivity extends RxBaseActivity
 
     private int pageSize = 20;
 
-    private List<ActivityCenterInfo.ListBean> activityCenters = new ArrayList<>();
-
     private View loadMoreView;
+
+    private List<ActivityCenterInfo.ListBean> activityCenters = new ArrayList<>();
 
     private ActivityCenterAdapter mAdapter;
 
@@ -136,12 +137,19 @@ public class ActivityCenterActivity extends RxBaseActivity
         RetrofitHelper.getActivityCenterApi()
                 .getActivityCenterList(pageNum, pageSize)
                 .compose(bindToLifecycle())
+                .delay(1000, TimeUnit.MILLISECONDS)
                 .map(ActivityCenterInfo::getList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(listBeans -> {
+                .doOnNext(listBeans -> {
                     if (listBeans.size() < pageSize)
+                    {
                         loadMoreView.setVisibility(View.GONE);
+                        mHeaderViewRecyclerAdapter.removeFootView();
+                    }
+
+                })
+                .subscribe(listBeans -> {
 
                     activityCenters.addAll(listBeans);
                     finishTask();

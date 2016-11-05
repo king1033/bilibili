@@ -22,9 +22,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.entity.bangumi.MiddlewareBangumi;
-import com.hotbitmapgg.ohmybilibili.entity.recommended.RecommendInfo;
-import com.hotbitmapgg.ohmybilibili.module.home.bangumi.BangumiDetailsActivity;
+import com.hotbitmapgg.ohmybilibili.entity.recommend.RecommendInfo;
 import com.hotbitmapgg.ohmybilibili.module.home.bangumi.BangumiIndexActivity;
 import com.hotbitmapgg.ohmybilibili.module.home.bangumi.BangumiScheduleActivity;
 import com.hotbitmapgg.ohmybilibili.module.home.discover.OriginalRankActivity;
@@ -72,31 +70,20 @@ public class HomeRecommendedSection extends StatelessSection
     private final Random mRandom;
 
     private int[] icons = new int[]{
-            R.drawable.ic_header_hot,
-            R.drawable.ic_head_live,
-            R.drawable.ic_category_t13,
-            R.drawable.ic_category_t1,
-            R.drawable.ic_category_t3,
-            R.drawable.ic_category_t129,
-            R.drawable.ic_category_t4,
-            R.drawable.ic_category_t119,
-            R.drawable.ic_category_t36,
-            R.drawable.ic_category_t160,
-            R.drawable.ic_category_t155,
-            R.drawable.ic_category_t5,
-            R.drawable.ic_category_t11,
-            R.drawable.ic_category_t23
+            R.drawable.ic_header_hot, R.drawable.ic_head_live,
+            R.drawable.ic_category_t13, R.drawable.ic_category_t1,
+            R.drawable.ic_category_t3, R.drawable.ic_category_t129,
+            R.drawable.ic_category_t4, R.drawable.ic_category_t119,
+            R.drawable.ic_category_t36, R.drawable.ic_category_t160,
+            R.drawable.ic_category_t155, R.drawable.ic_category_t5,
+            R.drawable.ic_category_t11, R.drawable.ic_category_t23
     };
 
 
-    public HomeRecommendedSection(Context context, String title,
-                                  String type, int liveCount,
-                                  List<RecommendInfo.ResultBean.BodyBean> datas)
+    public HomeRecommendedSection(Context context, String title, String type, int liveCount, List<RecommendInfo.ResultBean.BodyBean> datas)
     {
 
-        super(R.layout.layout_home_recommend_head,
-                R.layout.layout_home_recommend_foot,
-                R.layout.layout_home_recommend_boby);
+        super(R.layout.layout_home_recommend_head, R.layout.layout_home_recommend_foot, R.layout.layout_home_recommend_boby);
 
         this.mContext = context;
         this.title = title;
@@ -140,22 +127,20 @@ public class HomeRecommendedSection extends StatelessSection
         itemViewHolder.mCardView.setOnClickListener(v -> {
 
             String gotoX = bodyBean.getGotoX();
-            if (gotoX.equals(TYPE_LIVE))
+            switch (gotoX)
             {
-                LivePlayerActivity.launch((Activity) mContext,
-                        Integer.valueOf(bodyBean.getParam()), bodyBean.getTitle(),
-                        bodyBean.getOnline(), bodyBean.getUpFace(), bodyBean.getUp(), 0);
-            } else if (gotoX.equals(GOTO_BANGUMI))
-            {
-                MiddlewareBangumi middlewareBangumi = new MiddlewareBangumi();
-                middlewareBangumi.setTitle(bodyBean.getTitle());
-                middlewareBangumi.setPic(bodyBean.getCover());
-                middlewareBangumi.setSpid(Integer.valueOf(bodyBean.getParam()));
-                BangumiDetailsActivity.launch((Activity) mContext, middlewareBangumi);
-            } else
-            {
-                VideoDetailsActivity.launch((Activity) mContext,
-                        Integer.parseInt(bodyBean.getParam()), bodyBean.getCover());
+                case TYPE_LIVE:
+                    LivePlayerActivity.launch((Activity) mContext,
+                            Integer.valueOf(bodyBean.getParam()), bodyBean.getTitle(),
+                            bodyBean.getOnline(), bodyBean.getUpFace(), bodyBean.getUp(), 0);
+                    break;
+                case GOTO_BANGUMI:
+
+                    break;
+                default:
+                    VideoDetailsActivity.launch((Activity) mContext,
+                            Integer.parseInt(bodyBean.getParam()), bodyBean.getCover());
+                    break;
             }
         });
 

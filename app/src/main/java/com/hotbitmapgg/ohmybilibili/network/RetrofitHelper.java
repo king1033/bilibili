@@ -4,12 +4,16 @@ import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.hotbitmapgg.ohmybilibili.BilibiliApp;
 import com.hotbitmapgg.ohmybilibili.network.api.ActivityCenterService;
 import com.hotbitmapgg.ohmybilibili.network.api.AllareasRankService;
+import com.hotbitmapgg.ohmybilibili.network.api.AttentionDynamicService;
 import com.hotbitmapgg.ohmybilibili.network.api.AuthorRecommendedService;
+import com.hotbitmapgg.ohmybilibili.network.api.BangumiAppIndexService;
+import com.hotbitmapgg.ohmybilibili.network.api.BangumiDetailsCommentService;
+import com.hotbitmapgg.ohmybilibili.network.api.BangumiDetailsRecommendService;
+import com.hotbitmapgg.ohmybilibili.network.api.BangumiDetailsService;
 import com.hotbitmapgg.ohmybilibili.network.api.BangumiIndexService;
 import com.hotbitmapgg.ohmybilibili.network.api.BangumiRecommendService;
 import com.hotbitmapgg.ohmybilibili.network.api.BangumiScheduleService;
 import com.hotbitmapgg.ohmybilibili.network.api.HDVideoService;
-import com.hotbitmapgg.ohmybilibili.network.api.HomeBangumiRecommendService;
 import com.hotbitmapgg.ohmybilibili.network.api.HotSearchTagService;
 import com.hotbitmapgg.ohmybilibili.network.api.LiveAppIndexService;
 import com.hotbitmapgg.ohmybilibili.network.api.LiveUrlService;
@@ -34,12 +38,15 @@ import com.hotbitmapgg.ohmybilibili.network.api.UserLiveRoomStatusService;
 import com.hotbitmapgg.ohmybilibili.network.api.UserPlayGameService;
 import com.hotbitmapgg.ohmybilibili.network.api.VideoCommentService;
 import com.hotbitmapgg.ohmybilibili.network.api.VideoDetailsService;
+import com.hotbitmapgg.ohmybilibili.network.api.VipGameService;
+import com.hotbitmapgg.ohmybilibili.utils.CommonUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -78,9 +85,9 @@ public class RetrofitHelper
 
     private static final String USER_DETAILS_BASE_URL = "http://space.bilibili.com/";
 
-    private static final String IM9_BASE_URL = "http://www.im9.com/";
+    private static final String VIP_BASE_URL = "http://vip.bilibili.com/";
 
-    public static final String HDSLB_HOST = "http://i2.hdslb.com";
+    private static final String IM9_BASE_URL = "http://www.im9.com/";
 
     private static final String COMMON_UA_STR = "OhMyBiliBili Android Client/2.1 (100332338@qq.com)";
 
@@ -149,26 +156,7 @@ public class RetrofitHelper
     }
 
     /**
-     * 获取首页番剧推荐列表
-     *
-     * @return
-     */
-
-    public static HomeBangumiRecommendService getHomeBnagumiRecommendApi()
-    {
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BANGUMI_BASE_URL)
-                .client(mOkHttpClient)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        return retrofit.create(HomeBangumiRecommendService.class);
-    }
-
-    /**
-     * 获取二次元新番
+     * 获取新番连载
      *
      * @return
      */
@@ -419,7 +407,7 @@ public class RetrofitHelper
     {
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(APP_BASE_URL)
+                .baseUrl(BANGUMI_BASE_URL)
                 .client(mOkHttpClient)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
@@ -685,11 +673,120 @@ public class RetrofitHelper
 
 
     /**
-     * 初始化OKHttpClient
-     * 设置缓存
-     * 设置超时时间
-     * 设置打印日志
-     * 设置UA拦截器
+     * 获取番剧详情数据
+     *
+     * @return
+     */
+    public static BangumiDetailsService getBangumiDetailsApi()
+    {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BANGUMI_BASE_URL)
+                .client(mOkHttpClient)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(BangumiDetailsService.class);
+    }
+
+    /**
+     * 获取番剧详情番剧推荐
+     *
+     * @return
+     */
+    public static BangumiDetailsRecommendService getBangumiDetailsRecommendApi()
+    {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BANGUMI_BASE_URL)
+                .client(mOkHttpClient)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(BangumiDetailsRecommendService.class);
+    }
+
+
+    /**
+     * 游戏中心大会员礼包专区
+     *
+     * @return
+     */
+    public static VipGameService getVipGameApi()
+    {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(VIP_BASE_URL)
+                .client(mOkHttpClient)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(VipGameService.class);
+    }
+
+
+    /**
+     * 获取首页番剧内容
+     *
+     * @return
+     */
+    public static BangumiAppIndexService getBangumiAppIndexApi()
+    {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BANGUMI_BASE_URL)
+                .client(mOkHttpClient)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(BangumiAppIndexService.class);
+    }
+
+
+    /**
+     * 获取关注界面动态数据
+     *
+     * @return
+     */
+    public static AttentionDynamicService getAttentionDynamicApi()
+    {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(HOST_API_BASE_URL)
+                .client(mOkHttpClient)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(AttentionDynamicService.class);
+    }
+
+
+    /**
+     * 获取番剧详情番剧评论
+     *
+     * @return
+     */
+    public static BangumiDetailsCommentService getBangumiDetailsCommentApi()
+    {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(HOST_API_BASE_URL)
+                .client(mOkHttpClient)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(BangumiDetailsCommentService.class);
+    }
+
+
+    /**
+     * 初始化OKHttpClient,设置缓存,设置超时时间,设置打印日志,设置UA拦截器
      */
     private static void initOkHttpClient()
     {
@@ -704,7 +801,7 @@ public class RetrofitHelper
                 {
                     //设置Http缓存
                     Cache cache = new Cache(new File(BilibiliApp.getInstance()
-                            .getCacheDir(), "HttpCache"), 1024 * 1024 * 100);
+                            .getCacheDir(), "HttpCache"), 1024 * 1024 * 10);
 
                     mOkHttpClient = new OkHttpClient.Builder()
                             .cache(cache)
@@ -744,8 +841,7 @@ public class RetrofitHelper
 
 
     /**
-     * 为okhttp添加缓存，缓存时间为1天，
-     * 这里是考虑到服务器不支持缓存时，从而让okhttp支持缓存
+     * 为okhttp添加缓存，这里是考虑到服务器不支持缓存时，从而让okhttp支持缓存
      */
     private static class CacheInterceptor implements Interceptor
     {
@@ -754,12 +850,39 @@ public class RetrofitHelper
         public Response intercept(Chain chain) throws IOException
         {
 
+            // 有网络时 设置缓存超时时间1个小时
+            int maxAge = 60 * 60;
+            // 无网络时，设置超时为1天
+            int maxStale = 60 * 60 * 24;
             Request request = chain.request();
-            return chain.proceed(request).newBuilder()
-                    .removeHeader("Pragma")
-                    .removeHeader("Cache-Control")
-                    .header("Cache-Control", "max-age=" + 3600 * 24)
-                    .build();
+            if (CommonUtil.isNetworkAvailable(BilibiliApp.getInstance()))
+            {
+                //有网络时只从网络获取
+                request = request.newBuilder()
+                        .cacheControl(CacheControl.FORCE_NETWORK)
+                        .build();
+            } else
+            {
+                //无网络时只从缓存中读取
+                request = request.newBuilder()
+                        .cacheControl(CacheControl.FORCE_CACHE)
+                        .build();
+            }
+            Response response = chain.proceed(request);
+            if (CommonUtil.isNetworkAvailable(BilibiliApp.getInstance()))
+            {
+                response = response.newBuilder()
+                        .removeHeader("Pragma")
+                        .header("Cache-Control", "public, max-age=" + maxAge)
+                        .build();
+            } else
+            {
+                response = response.newBuilder()
+                        .removeHeader("Pragma")
+                        .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
+                        .build();
+            }
+            return response;
         }
     }
 }

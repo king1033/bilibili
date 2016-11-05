@@ -7,10 +7,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.hotbitmapgg.ohmybilibili.BilibiliApp;
 import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.adapter.LiveAppIndexAdapter;
 import com.hotbitmapgg.ohmybilibili.base.RxLazyFragment;
+import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
 import com.hotbitmapgg.ohmybilibili.utils.SnackbarUtil;
 import com.hotbitmapgg.ohmybilibili.widget.CustomEmptyView;
 
@@ -36,8 +36,6 @@ public class HomeLiveFragment extends RxLazyFragment
     @BindView(R.id.empty_layout)
     CustomEmptyView mCustomEmptyView;
 
-    private boolean mIsCacheRefresh = false;
-
     private LiveAppIndexAdapter mLiveAppIndexAdapter;
 
 
@@ -60,8 +58,20 @@ public class HomeLiveFragment extends RxLazyFragment
     public void finishCreateView(Bundle state)
     {
 
+        isPrepared = true;
+        lazyLoad();
+    }
+
+    @Override
+    protected void lazyLoad()
+    {
+
+        if (!isPrepared || !isVisible)
+            return;
+
         initRefreshLayout();
         initRecyclerView();
+        isPrepared = false;
     }
 
     @Override
@@ -91,10 +101,7 @@ public class HomeLiveFragment extends RxLazyFragment
     {
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mIsCacheRefresh = true;
-            loadData();
-        });
+        mSwipeRefreshLayout.setOnRefreshListener(this::loadData);
         mSwipeRefreshLayout.post(() -> {
 
             mSwipeRefreshLayout.setRefreshing(true);
@@ -106,15 +113,14 @@ public class HomeLiveFragment extends RxLazyFragment
     protected void loadData()
     {
 
-        BilibiliApp.getInstance()
-                .getRepository()
-                .getLiveAppIndex(mIsCacheRefresh)
+        RetrofitHelper.getLiveAppIndexApi()
+                .getLiveAppIndex()
                 .compose(bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(liveAppIndexInfoReply -> {
+                .subscribe(liveAppIndexInfo -> {
 
-                    mLiveAppIndexAdapter.setLiveInfo(liveAppIndexInfoReply.getData());
+                    mLiveAppIndexAdapter.setLiveInfo(liveAppIndexInfo);
                     finishTask();
                 }, throwable -> {
                     initEmptyView();

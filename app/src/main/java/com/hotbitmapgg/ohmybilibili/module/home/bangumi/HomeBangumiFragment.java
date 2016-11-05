@@ -6,18 +6,17 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.hotbitmapgg.ohmybilibili.BilibiliApp;
 import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.adapter.section.HomeBangumiBannerSection;
+import com.hotbitmapgg.ohmybilibili.adapter.section.HomeBangumiBobySection;
 import com.hotbitmapgg.ohmybilibili.adapter.section.HomeBangumiItemSection;
 import com.hotbitmapgg.ohmybilibili.adapter.section.HomeBangumiNewSerialSection;
 import com.hotbitmapgg.ohmybilibili.adapter.section.HomeBangumiRecommendSection;
 import com.hotbitmapgg.ohmybilibili.adapter.section.HomeBangumiSeasonNewSection;
 import com.hotbitmapgg.ohmybilibili.base.RxLazyFragment;
-import com.hotbitmapgg.ohmybilibili.entity.bangumi.BangumiRecommend;
-import com.hotbitmapgg.ohmybilibili.entity.bangumi.HomeBangumiRecommend;
-import com.hotbitmapgg.ohmybilibili.entity.bangumi.NewBangumiSerial;
-import com.hotbitmapgg.ohmybilibili.entity.bangumi.SeasonNewBangumi;
+import com.hotbitmapgg.ohmybilibili.entity.bangumi.BangumiAppIndexInfo;
+import com.hotbitmapgg.ohmybilibili.entity.bangumi.BangumiRecommendInfo;
+import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
 import com.hotbitmapgg.ohmybilibili.utils.SnackbarUtil;
 import com.hotbitmapgg.ohmybilibili.widget.CustomEmptyView;
 import com.hotbitmapgg.ohmybilibili.widget.banner.BannerEntity;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import io.rx_cache.Reply;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -53,19 +51,21 @@ public class HomeBangumiFragment extends RxLazyFragment
 
     private boolean mIsRefreshing = false;
 
-    private boolean mIsCacheRefresh = false;
-
     private List<BannerEntity> bannerList = new ArrayList<>();
 
-    private List<BangumiRecommend.ResultBean> bangumiRecommends = new ArrayList<>();
+    private List<BangumiRecommendInfo.ResultBean> bangumiRecommends = new ArrayList<>();
 
-    private List<HomeBangumiRecommend.ResultBean.BannersBean> banners = new ArrayList<>();
+    private List<BangumiAppIndexInfo.ResultBean.AdBean.HeadBean> banners = new ArrayList<>();
 
-    private List<NewBangumiSerial.ListBean> newBangumiSerials = new ArrayList<>();
+    private List<BangumiAppIndexInfo.ResultBean.AdBean.BodyBean> bangumibobys = new ArrayList<>();
 
-    private List<SeasonNewBangumi.ListBean> seasonNewBangumis = new ArrayList<>();
+    private List<BangumiAppIndexInfo.ResultBean.PreviousBean.ListBean> seasonNewBangumis = new ArrayList<>();
+
+    private List<BangumiAppIndexInfo.ResultBean.SerializingBean> newBangumiSerials = new ArrayList<>();
 
     private SectionedRecyclerViewAdapter mSectionedRecyclerViewAdapter;
+
+    private int season;
 
     public static HomeBangumiFragment newInstance()
     {
@@ -84,8 +84,20 @@ public class HomeBangumiFragment extends RxLazyFragment
     public void finishCreateView(Bundle state)
     {
 
+        isPrepared = true;
+        lazyLoad();
+    }
+
+    @Override
+    protected void lazyLoad()
+    {
+
+        if (!isPrepared || !isVisible)
+            return;
+
         initRefreshLayout();
         initRecyclerView();
+        isPrepared = false;
     }
 
     @Override
@@ -143,8 +155,9 @@ public class HomeBangumiFragment extends RxLazyFragment
     {
 
         mIsRefreshing = true;
-        mIsCacheRefresh = true;
         banners.clear();
+        bannerList.clear();
+        bangumibobys.clear();
         bangumiRecommends.clear();
         newBangumiSerials.clear();
         seasonNewBangumis.clear();
@@ -156,54 +169,31 @@ public class HomeBangumiFragment extends RxLazyFragment
     protected void loadData()
     {
 
-        BilibiliApp.getInstance().getRepository()
-                .getHomeBangumiRecommended(mIsCacheRefresh)
+        RetrofitHelper.getBangumiAppIndexApi()
+                .getBangumiAppIndex()
                 .compose(bindToLifecycle())
-                .map(homeBangumiRecommendReply -> homeBangumiRecommendReply.getData().getResult().getBanners())
-                .flatMap(new Func1<List<HomeBangumiRecommend.ResultBean.BannersBean>,Observable<Reply<SeasonNewBangumi>>>()
+                .flatMap(new Func1<BangumiAppIndexInfo,Observable<BangumiRecommendInfo>>()
                 {
 
                     @Override
-                    public Observable<Reply<SeasonNewBangumi>> call(List<HomeBangumiRecommend.ResultBean.BannersBean> bannersBeans)
+                    public Observable<BangumiRecommendInfo> call(BangumiAppIndexInfo bangumiAppIndexInfo)
                     {
 
-                        banners.addAll(bannersBeans);
-                        return BilibiliApp.getInstance().getRepository().getSeasonNewBangumiList(mIsCacheRefresh);
+                        banners.addAll(bangumiAppIndexInfo.getResult().getAd().getHead());
+                        bangumibobys.addAll(bangumiAppIndexInfo.getResult().getAd().getBody());
+                        seasonNewBangumis.addAll(bangumiAppIndexInfo.getResult().getPrevious().getList());
+                        season = bangumiAppIndexInfo.getResult().getPrevious().getSeason();
+                        newBangumiSerials.addAll(bangumiAppIndexInfo.getResult().getSerializing());
+                        return RetrofitHelper.getBangumiRecommendedApi().getBangumiRecommended();
                     }
                 })
                 .compose(bindToLifecycle())
-                .map(seasonNewBangumiReply -> seasonNewBangumiReply.getData().getList())
-                .flatMap(new Func1<List<SeasonNewBangumi.ListBean>,Observable<Reply<NewBangumiSerial>>>()
-                {
-
-                    @Override
-                    public Observable<Reply<NewBangumiSerial>> call(List<SeasonNewBangumi.ListBean> listBeans)
-                    {
-
-                        seasonNewBangumis.addAll(listBeans);
-                        return BilibiliApp.getInstance().getRepository().getNewBangumiSerialList(mIsCacheRefresh);
-                    }
-                })
-                .compose(bindToLifecycle())
-                .map(newBangumiSerialReply -> newBangumiSerialReply.getData().getList())
-                .flatMap(new Func1<List<NewBangumiSerial.ListBean>,Observable<Reply<BangumiRecommend>>>()
-                {
-
-                    @Override
-                    public Observable<Reply<BangumiRecommend>> call(List<NewBangumiSerial.ListBean> listBeans)
-                    {
-
-                        newBangumiSerials.addAll(listBeans);
-                        return BilibiliApp.getInstance().getRepository().getBangumiRecommended(mIsCacheRefresh);
-                    }
-                })
-                .compose(bindToLifecycle())
-                .map(bangumiRecommendReply -> bangumiRecommendReply.getData().getResult())
+                .map(BangumiRecommendInfo::getResult)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(bangumiDetailsRecommend -> {
+                .subscribe(resultBeans -> {
 
-                    bangumiRecommends.addAll(bangumiDetailsRecommend);
+                    bangumiRecommends.addAll(resultBeans);
                     finishTask();
                 }, throwable -> {
                     initEmptyView();
@@ -218,19 +208,16 @@ public class HomeBangumiFragment extends RxLazyFragment
         mIsRefreshing = false;
         hideEmptyView();
 
-        BannerEntity banner;
-        for (int i = 0, size = banners.size(); i < size; i++)
-        {
-            banner = new BannerEntity();
-            HomeBangumiRecommend.ResultBean.BannersBean bannersBean = banners.get(i);
-            banner.img = bannersBean.getImg();
-            banner.link = bannersBean.getLink();
-            bannerList.add(banner);
-        }
+        Observable.from(banners)
+                .compose(bindToLifecycle())
+                .forEach(bannersBean -> bannerList.add(new BannerEntity(
+                        bannersBean.getLink(), bannersBean.getTitle(), bannersBean.getImg())));
+
         mSectionedRecyclerViewAdapter.addSection(new HomeBangumiBannerSection(bannerList));
         mSectionedRecyclerViewAdapter.addSection(new HomeBangumiItemSection(getActivity()));
         mSectionedRecyclerViewAdapter.addSection(new HomeBangumiNewSerialSection(getActivity(), newBangumiSerials));
-        mSectionedRecyclerViewAdapter.addSection(new HomeBangumiSeasonNewSection(getActivity(), seasonNewBangumis));
+        mSectionedRecyclerViewAdapter.addSection(new HomeBangumiBobySection(getActivity(), bangumibobys));
+        mSectionedRecyclerViewAdapter.addSection(new HomeBangumiSeasonNewSection(getActivity(), season, seasonNewBangumis));
         mSectionedRecyclerViewAdapter.addSection(new HomeBangumiRecommendSection(getActivity(), bangumiRecommends));
         mSectionedRecyclerViewAdapter.notifyDataSetChanged();
     }

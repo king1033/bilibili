@@ -14,10 +14,9 @@ import com.hotbitmapgg.ohmybilibili.R;
 import com.hotbitmapgg.ohmybilibili.adapter.helper.AbsRecyclerViewAdapter;
 import com.hotbitmapgg.ohmybilibili.entity.video.VideoComment;
 import com.hotbitmapgg.ohmybilibili.network.auxiliary.UrlHelper;
-import com.hotbitmapgg.ohmybilibili.utils.DateUtils;
+import com.hotbitmapgg.ohmybilibili.utils.DateUtil;
 import com.hotbitmapgg.ohmybilibili.widget.CircleImageView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,7 +28,7 @@ import java.util.List;
 public class VideoCommentAdapter extends AbsRecyclerViewAdapter
 {
 
-    private List<VideoComment.List> comments = new ArrayList<>();
+    private List<VideoComment.List> comments;
 
     public VideoCommentAdapter(RecyclerView recyclerView, List<VideoComment.List> comments)
     {
@@ -54,44 +53,42 @@ public class VideoCommentAdapter extends AbsRecyclerViewAdapter
 
         if (holder instanceof ItemViewHolder)
         {
-            try
+
+            ItemViewHolder mHolder = (ItemViewHolder) holder;
+            VideoComment.List list = comments.get(position);
+            mHolder.mUserName.setText(list.nick);
+
+            Glide.with(getContext())
+                    .load(UrlHelper.getFaceUrlByUrl(list.face))
+                    .centerCrop()
+                    .dontAnimate()
+                    .placeholder(R.drawable.ico_user_default)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(mHolder.mUserAvatar);
+
+            int currentLevel = list.level_info.current_level;
+            checkLevel(currentLevel, mHolder);
+
+            switch (list.sex)
             {
-                ItemViewHolder mHolder = (ItemViewHolder) holder;
-                VideoComment.List list = comments.get(position);
-                mHolder.mUserName.setText(list.nick);
-
-                Glide.with(getContext())
-                        .load(UrlHelper.getFaceUrlByUrl(list.face))
-                        .centerCrop()
-                        .dontAnimate()
-                        .placeholder(R.drawable.ico_user_default)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(mHolder.mUserAvatar);
-
-                int currentLevel = list.level_info.current_level;
-                checkLevel(currentLevel, mHolder);
-                if (list.sex.equals("女"))
-                {
+                case "女":
                     mHolder.mUserSex.setImageResource(R.drawable.ic_user_female);
-                } else if (list.sex.equals("男"))
-                {
+                    break;
+                case "男":
                     mHolder.mUserSex.setImageResource(R.drawable.ic_user_male);
-                } else
-                {
+                    break;
+                default:
                     mHolder.mUserSex.setImageResource(R.drawable.ic_user_gay_border);
-                }
-
-                mHolder.mCommentNum.setText(String.valueOf(list.reply_count));
-                mHolder.mSpot.setText(String.valueOf(list.good));
-                long l = DateUtils.stringToLong(list.create_at, "yyyy-MM-dd HH:mm");
-                String time = DateUtils.getDescriptionTimeFromTimestamp(l);
-                mHolder.mCommentTime.setText(time);
-                mHolder.mContent.setText(list.msg);
-                mHolder.mFloor.setText("#" + list.lv);
-            } catch (Exception e)
-            {
-                e.printStackTrace();
+                    break;
             }
+
+            mHolder.mCommentNum.setText(String.valueOf(list.reply_count));
+            mHolder.mSpot.setText(String.valueOf(list.good));
+            long l = DateUtil.stringToLong(list.create_at, "yyyy-MM-dd HH:mm");
+            String time = DateUtil.getDescriptionTimeFromTimestamp(l);
+            mHolder.mCommentTime.setText(time);
+            mHolder.mContent.setText(list.msg);
+            mHolder.mFloor.setText("#" + list.lv);
         }
 
         super.onBindViewHolder(holder, position);

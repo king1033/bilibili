@@ -1,32 +1,32 @@
 package com.hotbitmapgg.ohmybilibili.module.common;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.hotbitmapgg.ohmybilibili.R;
-import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
-import com.hotbitmapgg.ohmybilibili.utils.PreferenceUtils;
+import com.hotbitmapgg.ohmybilibili.utils.ConstantUtil;
+import com.hotbitmapgg.ohmybilibili.utils.PreferenceUtil;
+import com.hotbitmapgg.ohmybilibili.utils.SystemUiVisibilityUtil;
+import com.trello.rxlifecycle.components.RxActivity;
 
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-
-import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.GOTO_HOME;
-import static com.hotbitmapgg.ohmybilibili.utils.ConstantUtils.GOTO_LOGIN;
 
 
 /**
  * Created by hcc on 16/8/7 14:12
  * 100332338@qq.com
  * <p/>
- * 欢迎页
+ * 启动页界面
  */
-public class SplashActivity extends Activity
+public class SplashActivity extends RxActivity
 {
+
+    private Unbinder bind;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -34,41 +34,41 @@ public class SplashActivity extends Activity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        ButterKnife.bind(this);
-
+        bind = ButterKnife.bind(this);
+        SystemUiVisibilityUtil.hideStatusBar(getWindow(), true);
         setUpSplash();
     }
+
 
     private void setUpSplash()
     {
 
-        Observable.timer(2, TimeUnit.SECONDS)
+        Observable.timer(2000, TimeUnit.MILLISECONDS)
+                .compose(bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new Func1<Long,Observable<String>>()
-                {
-
-                    @Override
-                    public Observable<String> call(Long aLong)
-                    {
-
-                        boolean isLogin = PreferenceUtils.getBoolean(ConstantUtils.KEY, false);
-                        if (isLogin)
-                            return Observable.just(ConstantUtils.GOTO_HOME);
-                        else
-                            return Observable.just(ConstantUtils.GOTO_LOGIN);
-                    }
-                })
-                .subscribe(s -> {
-
-                    if (s.equals(ConstantUtils.GOTO_HOME))
-                    {
-                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                        finish();
-                    } else
-                    {
-                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                        finish();
-                    }
+                .subscribe(aLong -> {
+                    finishTask();
                 });
+    }
+
+    private void finishTask()
+    {
+
+        boolean isLogin = PreferenceUtil.getBoolean(ConstantUtil.KEY, false);
+        if (isLogin)
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        else
+            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+
+        SplashActivity.this.finish();
+    }
+
+
+    @Override
+    protected void onDestroy()
+    {
+
+        super.onDestroy();
+        bind.unbind();
     }
 }

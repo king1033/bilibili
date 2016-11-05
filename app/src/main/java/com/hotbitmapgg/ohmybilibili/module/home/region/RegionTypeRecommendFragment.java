@@ -14,7 +14,7 @@ import com.hotbitmapgg.ohmybilibili.adapter.section.RegionRecommendTypesSection;
 import com.hotbitmapgg.ohmybilibili.base.RxLazyFragment;
 import com.hotbitmapgg.ohmybilibili.entity.region.RegionRecommendInfo;
 import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
-import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
+import com.hotbitmapgg.ohmybilibili.utils.ConstantUtil;
 import com.hotbitmapgg.ohmybilibili.utils.LogUtil;
 import com.hotbitmapgg.ohmybilibili.utils.ToastUtil;
 import com.hotbitmapgg.ohmybilibili.widget.banner.BannerEntity;
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -65,7 +66,7 @@ public class RegionTypeRecommendFragment extends RxLazyFragment
 
         RegionTypeRecommendFragment fragment = new RegionTypeRecommendFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(ConstantUtils.EXTRA_RID, rid);
+        bundle.putInt(ConstantUtil.EXTRA_RID, rid);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -81,7 +82,7 @@ public class RegionTypeRecommendFragment extends RxLazyFragment
     public void finishCreateView(Bundle state)
     {
 
-        rid = getArguments().getInt(ConstantUtils.EXTRA_RID);
+        rid = getArguments().getInt(ConstantUtil.EXTRA_RID);
         initRefreshLayout();
         initRecyclerView();
     }
@@ -185,16 +186,10 @@ public class RegionTypeRecommendFragment extends RxLazyFragment
     private void converBanner()
     {
 
-        BannerEntity bannerEntity;
-        for (int i = 0, size = banners.size(); i < size; i++)
-        {
-            RegionRecommendInfo.DataBean.BannerBean.TopBean topBean = banners.get(i);
-            bannerEntity = new BannerEntity();
-            bannerEntity.img = topBean.getImage();
-            bannerEntity.link = topBean.getUri();
-            bannerEntity.title = topBean.getTitle();
-            bannerEntities.add(bannerEntity);
-        }
+        Observable.from(banners)
+                .compose(bindToLifecycle())
+                .forEach(topBean -> bannerEntities.add(new BannerEntity(topBean.getUri(),
+                        topBean.getTitle(), topBean.getImage())));
     }
 
     private void setRecycleNoScroll()

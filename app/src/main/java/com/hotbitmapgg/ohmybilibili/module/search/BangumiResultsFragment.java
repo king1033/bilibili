@@ -15,7 +15,7 @@ import com.hotbitmapgg.ohmybilibili.adapter.helper.HeaderViewRecyclerAdapter;
 import com.hotbitmapgg.ohmybilibili.base.RxLazyFragment;
 import com.hotbitmapgg.ohmybilibili.entity.search.SearchBangumiInfo;
 import com.hotbitmapgg.ohmybilibili.network.RetrofitHelper;
-import com.hotbitmapgg.ohmybilibili.utils.ConstantUtils;
+import com.hotbitmapgg.ohmybilibili.utils.ConstantUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class BangumiResultsFragment extends RxLazyFragment
 
         BangumiResultsFragment fragment = new BangumiResultsFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(ConstantUtils.EXTRA_CONTENT, content);
+        bundle.putString(ConstantUtil.EXTRA_CONTENT, content);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -79,7 +79,7 @@ public class BangumiResultsFragment extends RxLazyFragment
     public void finishCreateView(Bundle state)
     {
 
-        content = getArguments().getString(ConstantUtils.EXTRA_CONTENT);
+        content = getArguments().getString(ConstantUtil.EXTRA_CONTENT);
 
         mLoadingView.setImageResource(R.drawable.anim_search_loading);
         mAnimationDrawable = (AnimationDrawable) mLoadingView.getDrawable();
@@ -137,10 +137,15 @@ public class BangumiResultsFragment extends RxLazyFragment
                 .delay(1000, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(dataBean -> {
-                    if (dataBean.getItems().size() < pageSize)
-                        loadMoreView.setVisibility(View.GONE);
+                .doOnNext(dataBean -> {
 
+                    if (dataBean.getItems().size() < pageSize)
+                    {
+                        loadMoreView.setVisibility(View.GONE);
+                        mHeaderViewRecyclerAdapter.removeFootView();
+                    }
+                })
+                .subscribe(dataBean -> {
                     bangumis.addAll(dataBean.getItems());
                     finishTask();
                 }, throwable -> {
