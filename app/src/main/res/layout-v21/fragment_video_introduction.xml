@@ -66,8 +66,9 @@
                 android:layout_marginStart="@dimen/video_info_count_text_margin_start"
                 android:textColor="@color/black_alpha_45"
                 android:textSize="@dimen/default_tiny_text_size" />
-        </LinearLayout>
 
+
+        </LinearLayout>
 
         <Space
             android:layout_width="match_parent"
@@ -258,7 +259,6 @@
 
         <include layout="@layout/layout_user_chase_bangumi_head" />
 
-
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/line_height"
@@ -305,6 +305,7 @@
             android:background="@color/gray_light" />
 
         <RelativeLayout
+            android:id="@+id/layout_video_related"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
